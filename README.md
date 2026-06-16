@@ -1,5 +1,12 @@
 # 语界 LinguaSpace
 
+![Python](https://img.shields.io/badge/Python%203.10+-3776AB?logo=python&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js%2018+-5FA04E?logo=nodedotjs&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker%20Desktop-2496ED?logo=docker&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-000000?logo=ollama&logoColor=white)
+![Qwen3.5-9b](https://img.shields.io/badge/qwen3.5:9b-FF6A00?logo=alibaba&logoColor=white)
+![Qwen3-vl-4b](https://img.shields.io/badge/qwen3--vl:4b-792EE5?logo=alibaba&logoColor=white)
+
 LinguaSpace 是面向云南文旅场景的多端 Web App，包含项目介绍、游客端、导游端、知识库维护和系统管理五个一级模块。前端优先接入真实 FastAPI 后端；后端缺少能力时，页面明确显示“接口待接入”，不使用 mock data 伪装成功。
 
 ## 启动方式
