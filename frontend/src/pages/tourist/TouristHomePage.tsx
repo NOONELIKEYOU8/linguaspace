@@ -7,8 +7,8 @@ import { LoadingState } from "../../components/common/LoadingState";
 
 const entries = [
   [MessageCircle, "多语问答", "用熟悉的语言，了解沿途文化故事。", "MULTILINGUAL RAG", "/tourist/chat", "/assets/public-yulong-mountain.jpg"],
-  [Mic, "语音导览", "边走边问，让云南山水慢慢被听见。", "VOICE GUIDE", "/tourist/chat", "/assets/public-rainforest-waterfall.jpg"],
-  [Camera, "拍照识别", "从古建细节与街巷风物中发现文化。", "VISION GUIDE", "/tourist/chat", "/assets/intro-scenario-photo-recognition.png"],
+  [Mic, "语音导览", "边走边问，让云南山水慢慢被听见。", "VOICE GUIDE", "/tourist/voice", "/assets/public-rainforest-waterfall.jpg"],
+  [Camera, "拍照识别", "从古建细节与街巷风物中发现文化。", "VISION GUIDE", "/tourist/image", "/assets/intro-scenario-photo-recognition.png"],
   [Map, "路线推荐", "按兴趣选择更适合自己的云南路径。", "SMART ROUTES", "/tourist/routes", "/assets/route-photography.png"],
 ] as const;
 

@@ -6,7 +6,7 @@ export function ApiPendingState({ items }: { items: string[] }) {
     <section className="state-card pending-state">
       <PlugZap size={20} />
       <div>
-        <strong>接口待接入</strong>
+        <strong>功能开发中</strong>
         <p>{items.join("、")}</p>
       </div>
     </section>

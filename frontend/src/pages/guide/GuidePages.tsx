@@ -4,10 +4,23 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { guideApi, type CollaborationCase, type GuideCorrection, type GuideProfile, type TakeoverLog } from "../../api/guide";
 import type { TouristSession } from "../../api/types";
 import { EmptyState } from "../../components/common/EmptyState";
+import { ErrorState } from "../../components/common/ErrorState";
+import { LoadingState } from "../../components/common/LoadingState";
 import { StatusBadge } from "../../components/common/StatusBadge";
 
 function Heading({kicker,title,text}:{kicker:string;title:string;text:string}){return <header className="page-heading"><span className="page-kicker">{kicker}</span><h1>{title}</h1><p>{text}</p></header>;}
-function useSessions(){const [items,setItems]=useState<TouristSession[]>([]);const refresh=()=>guideApi.sessions().then((r)=>setItems(r.items));useEffect(()=>{void refresh();},[]);return{items,refresh};}
+function useSessions(){
+  const [items,setItems]=useState<TouristSession[]>([]);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState("");
+  const refresh=()=>{
+    setLoading(true);
+    setError("");
+    return guideApi.sessions().then((r)=>setItems(r.items)).catch((reason:Error)=>setError(reason.message)).finally(()=>setLoading(false));
+  };
+  useEffect(()=>{void refresh();},[]);
+  return{items,refresh,loading,error};
+}
 
 function SessionCard({item}:{item:TouristSession}){
   return (
@@ -27,7 +40,7 @@ function SessionCard({item}:{item:TouristSession}){
 }
 
 export function GuideDashboardPage(){
-  const {items}=useSessions();
+  const {items,loading,error,refresh}=useSessions();
   return (
     <section className="page-stack guide-service-page">
       <div className="guide-dashboard-hero">
@@ -48,6 +61,9 @@ export function GuideDashboardPage(){
           </div>
           <Link to="/guide/sessions">查看全部<ArrowRight size={14}/></Link>
         </div>
+        {loading && <LoadingState label="正在读取导游协同会话" />}
+        {error && <ErrorState message={error} retry={refresh} />}
+        {!loading && !error && !items.length && <EmptyState label="暂无游客会话" />}
         <div className="guide-card-grid">{items.slice(0,6).map((i)=><SessionCard key={i.id} item={i}/>)}</div>
       </section>
     </section>
@@ -55,7 +71,7 @@ export function GuideDashboardPage(){
 }
 
 export function GuideSessionsPage(){
-  const {items}=useSessions();
+  const {items,loading,error,refresh}=useSessions();
   return (
     <section className="page-stack guide-service-page">
       <section className="guide-top-banner">
@@ -65,6 +81,9 @@ export function GuideSessionsPage(){
           <p>查看真实游客会话与当前状态，点击卡片进行接管或修正。</p>
         </div>
       </section>
+      {loading && <LoadingState label="正在读取游客会话列表" />}
+      {error && <ErrorState message={error} retry={refresh} />}
+      {!loading && !error && !items.length && <EmptyState label="暂无游客会话" />}
       <div className="guide-card-grid">{items.map((i)=><SessionCard key={i.id} item={i}/>)}</div>
     </section>
   );
@@ -72,7 +91,7 @@ export function GuideSessionsPage(){
 
 export function GuideSessionDetailPage(){
   const {id=""}=useParams();
-  const {items,refresh}=useSessions();
+  const {items,refresh,loading,error}=useSessions();
   const [searchParams,setSearchParams]=useSearchParams();
   const [reply,setReply]=useState("");
   const [showCorrect,setShowCorrect]=useState(false);
@@ -128,6 +147,20 @@ export function GuideSessionDetailPage(){
     setToast("修正已提交");
   };
 
+  if(loading) return (
+    <section className="page-stack">
+      <Heading kicker="SESSION DETAIL" title="游客会话详情" text="接管、释放并发送真人导游回复。"/>
+      <LoadingState label="正在读取会话详情" />
+    </section>
+  );
+
+  if(error) return (
+    <section className="page-stack">
+      <Heading kicker="SESSION DETAIL" title="游客会话详情" text="接管、释放并发送真人导游回复。"/>
+      <ErrorState message={error} retry={refresh} />
+    </section>
+  );
+
   if(!session) return (
     <section className="page-stack">
       <Heading kicker="SESSION DETAIL" title="游客会话详情" text="接管、释放并发送真人导游回复。"/>
@@ -180,25 +213,50 @@ export function GuideSessionDetailPage(){
   );
 }
 
-export function GuideTakeoverPage(){const[logs,setLogs]=useState<TakeoverLog[]>([]);useEffect(()=>{guideApi.takeoverLogs().then((r)=>setLogs(r.items));},[]);return <section className="page-stack guide-service-page"><section className="guide-top-banner"><div><span className="page-kicker"><ShieldCheck size={16}/> TAKEOVER CENTER</span><h1>人工接管日志</h1><p>展示游客申请、导游接管与释放记录。</p></div></section>{!logs.length?<EmptyState label="暂无接管日志"/>:<div className="history-list">{logs.map((i)=><article key={i.id}><ShieldCheck size={15}/><div><strong>{i.action}</strong><small>{i.session_id.slice(0,10)} · {i.created_at}</small></div></article>)}</div>}</section>;}
+export function GuideTakeoverPage(){
+  const[logs,setLogs]=useState<TakeoverLog[]>([]);
+  const[loading,setLoading]=useState(true);
+  const[error,setError]=useState("");
+  const refresh=()=>{setLoading(true);setError("");guideApi.takeoverLogs().then((r)=>setLogs(r.items)).catch((reason:Error)=>setError(reason.message)).finally(()=>setLoading(false));};
+  useEffect(refresh,[]);
+  return <section className="page-stack guide-service-page"><section className="guide-top-banner"><div><span className="page-kicker"><ShieldCheck size={16}/> TAKEOVER CENTER</span><h1>人工接管日志</h1><p>展示游客申请、导游接管与释放记录。</p></div></section>{loading&&<LoadingState label="正在读取接管日志"/>}{error&&<ErrorState message={error} retry={refresh}/>} {!loading&&!error&&!logs.length?<EmptyState label="暂无接管日志"/>:<div className="history-list">{logs.map((i)=><article key={i.id}><ShieldCheck size={15}/><div><strong>{i.action}</strong><small>{i.session_id.slice(0,10)} · {i.created_at}</small></div></article>)}</div>}</section>;
+}
 
-export function GuideCorrectionsPage(){const[items,setItems]=useState<GuideCorrection[]>([]);const[form,setForm]=useState({question:"",ai_answer:"",guide_note:""});const refresh=()=>guideApi.corrections().then((r)=>setItems(r.items));useEffect(()=>{void refresh();},[]);const create=async()=>{await guideApi.addCorrection(form);setForm({question:"",ai_answer:"",guide_note:""});refresh();};const close=async(id:string)=>{await guideApi.updateCorrection(id,{status:"resolved"});refresh();};return <section className="page-stack guide-service-page"><section className="guide-top-banner"><div><span className="page-kicker"><Pencil size={16}/> ANSWER CORRECTIONS</span><h1>回答修正</h1><p>提交并维护真实导游修正记录。</p></div></section><section className="tech-card form-stack"><textarea value={form.question} onChange={(e)=>setForm({...form,question:e.target.value})} placeholder="游客问题"/><textarea value={form.ai_answer} onChange={(e)=>setForm({...form,ai_answer:e.target.value})} placeholder="优化答案"/><textarea value={form.guide_note} onChange={(e)=>setForm({...form,guide_note:e.target.value})} placeholder="修正依据"/><button className="primary" onClick={create}><BookOpenCheck size={15}/>提交审核</button></section><div className="history-list">{items.map((i)=><article key={i.id}><div><strong>{i.guide_note}</strong><small>{i.optimized_answer}</small></div><button onClick={()=>close(i.id)}>标记完成</button></article>)}</div></section>;}
+export function GuideCorrectionsPage(){
+  const[items,setItems]=useState<GuideCorrection[]>([]);
+  const[form,setForm]=useState({question:"",ai_answer:"",guide_note:""});
+  const[loading,setLoading]=useState(true);
+  const[error,setError]=useState("");
+  const[message,setMessage]=useState("");
+  const refresh=()=>{setLoading(true);setError("");guideApi.corrections().then((r)=>setItems(r.items)).catch((reason:Error)=>setError(reason.message)).finally(()=>setLoading(false));};
+  useEffect(()=>{void refresh();},[]);
+  const create=async()=>{try{await guideApi.addCorrection(form);setForm({question:"",ai_answer:"",guide_note:""});setMessage("修正已提交审核。");refresh();}catch(reason){setError(reason instanceof Error?reason.message:"提交修正失败");}};
+  const close=async(id:string)=>{try{await guideApi.updateCorrection(id,{status:"resolved"});setMessage("修正已标记完成。");refresh();}catch(reason){setError(reason instanceof Error?reason.message:"更新修正失败");}};
+  return <section className="page-stack guide-service-page"><section className="guide-top-banner"><div><span className="page-kicker"><Pencil size={16}/> ANSWER CORRECTIONS</span><h1>回答修正</h1><p>提交并维护真实导游修正记录。</p></div></section><section className="tech-card form-stack"><textarea value={form.question} onChange={(e)=>setForm({...form,question:e.target.value})} placeholder="游客问题"/><textarea value={form.ai_answer} onChange={(e)=>setForm({...form,ai_answer:e.target.value})} placeholder="优化答案"/><textarea value={form.guide_note} onChange={(e)=>setForm({...form,guide_note:e.target.value})} placeholder="修正依据"/><button className="primary" onClick={create} disabled={!form.question.trim()||!form.guide_note.trim()}><BookOpenCheck size={15}/>提交审核</button></section>{message&&<p className="form-message">{message}</p>}{loading&&<LoadingState label="正在读取修正记录"/>}{error&&<ErrorState message={error} retry={refresh}/>} {!loading&&!error&&!items.length&&<EmptyState label="暂无修正记录"/>}<div className="history-list">{items.map((i)=><article key={i.id}><div><strong>{i.guide_note}</strong><small>{i.optimized_answer}</small></div><button onClick={()=>close(i.id)}>标记完成</button></article>)}</div></section>;
+}
 
 export function GuideCasesPage(){
   const[items,setItems]=useState<CollaborationCase[]>([]);
   const[form,setForm]=useState({case_type:"现场协同",question:"",strategy:"",guide_note:""});
-  const refresh=()=>guideApi.cases().then((r)=>setItems(r.items));
+  const[loading,setLoading]=useState(true);
+  const[error,setError]=useState("");
+  const[message,setMessage]=useState("");
+  const refresh=()=>{setLoading(true);setError("");guideApi.cases().then((r)=>setItems(r.items)).catch((reason:Error)=>setError(reason.message)).finally(()=>setLoading(false));};
   useEffect(()=>{void refresh();},[]);
-  const create=async()=>{await guideApi.addCase(form);setForm({...form,question:"",strategy:"",guide_note:""});refresh();};
-  const remove=async(id:string)=>{await guideApi.deleteCase(id);refresh();};
+  const create=async()=>{try{await guideApi.addCase(form);setForm({...form,question:"",strategy:"",guide_note:""});setMessage("案例已新增。");refresh();}catch(reason){setError(reason instanceof Error?reason.message:"新增案例失败");}};
+  const remove=async(id:string)=>{try{await guideApi.deleteCase(id);setMessage("案例已删除。");refresh();}catch(reason){setError(reason instanceof Error?reason.message:"删除案例失败");}};
   return (
     <section className="page-stack guide-service-page">
       <Heading kicker="GUIDE CASE LIBRARY" title="讲解案例库" text="沉淀可复用的现场服务策略。"/>
       <section className="tech-card form-stack">
         <input value={form.question} onChange={(e)=>setForm({...form,question:e.target.value})} placeholder="问题"/>
         <textarea value={form.strategy} onChange={(e)=>setForm({...form,strategy:e.target.value})} placeholder="策略"/>
-        <button className="primary" onClick={create}><Plus size={15}/>新增案例</button>
+        <button className="primary" onClick={create} disabled={!form.question.trim()||!form.strategy.trim()}><Plus size={15}/>新增案例</button>
       </section>
+      {message&&<p className="form-message">{message}</p>}
+      {loading&&<LoadingState label="正在读取讲解案例"/>}
+      {error&&<ErrorState message={error} retry={refresh}/>}
+      {!loading&&!error&&!items.length&&<EmptyState label="暂无讲解案例"/>}
       <section className="case-grid">{items.map((i)=><article key={i.id}><StatusBadge>{i.case_type}</StatusBadge><h3>{i.question}</h3><p>{i.strategy}</p><button onClick={()=>remove(i.id)}><Trash2 size={14}/></button></article>)}</section>
     </section>
   );
@@ -206,12 +264,29 @@ export function GuideCasesPage(){
 
 export function GuideProfilePage(){
   const[value,setValue]=useState<GuideProfile>();
-  useEffect(()=>{guideApi.profile().then(setValue);},[]);
+  const[loading,setLoading]=useState(true);
+  const[error,setError]=useState("");
+  const refresh=()=>{setLoading(true);setError("");guideApi.profile().then(setValue).catch((reason:Error)=>setError(reason.message)).finally(()=>setLoading(false));};
+  useEffect(refresh,[]);
+
+  if(loading) return (
+    <section className="page-stack guide-service-page">
+      <Heading kicker="GUIDE PROFILE" title="导游个人中心" text="展示真实资料与贡献统计。"/>
+      <LoadingState label="正在读取导游资料"/>
+    </section>
+  );
+
+  if(error) return (
+    <section className="page-stack guide-service-page">
+      <Heading kicker="GUIDE PROFILE" title="导游个人中心" text="展示真实资料与贡献统计。"/>
+      <ErrorState message={error} retry={refresh}/>
+    </section>
+  );
 
   if(!value) return (
     <section className="page-stack guide-service-page">
       <Heading kicker="GUIDE PROFILE" title="导游个人中心" text="展示真实资料与贡献统计。"/>
-      <EmptyState label="加载中…"/>
+      <EmptyState label="暂无导游资料"/>
     </section>
   );
 
