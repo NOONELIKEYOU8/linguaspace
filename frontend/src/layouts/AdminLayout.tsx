@@ -1,7 +1,7 @@
 import { Activity } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
 import { systemApi } from "../api/system";
+import { AnimatedOutlet } from "../components/common/AnimatedOutlet";
 import { Breadcrumbs } from "../components/navigation/Breadcrumbs";
 import { PrimaryNav } from "../components/navigation/PrimaryNav";
 import { RoleSwitcher } from "../components/navigation/RoleSwitcher";
@@ -20,8 +20,17 @@ export function AdminLayout({ module }: { module: ModuleKey }) {
         <div className="admin-switch"><PrimaryNav compact /></div>
       </aside>
       <section className="admin-main">
-        <header className="admin-topbar"><Breadcrumbs /><div className="admin-topbar-right"><span className="connection-chip"><Activity size={14} />{connected === undefined ? "正在检查后端" : connected ? "后端已连接" : "后端连接失败"}</span><RoleSwitcher /></div></header>
-        <main className="admin-content"><Outlet /></main>
+        <header className="admin-topbar">
+          <Breadcrumbs />
+          <div className="admin-topbar-right">
+            <span className="connection-chip">
+              <Activity size={14} />
+              {connected === undefined ? "正在检查后端" : connected ? "后端已连接" : "后端连接失败"}
+            </span>
+            <RoleSwitcher />
+          </div>
+        </header>
+        <main className="admin-content"><AnimatedOutlet /></main>
       </section>
     </div>
   );

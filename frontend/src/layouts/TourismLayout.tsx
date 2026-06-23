@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { AnimatedOutlet } from "../components/common/AnimatedOutlet";
 import { PrimaryNav } from "../components/navigation/PrimaryNav";
 import { RoleSwitcher } from "../components/navigation/RoleSwitcher";
 import { SecondaryNav } from "../components/navigation/SecondaryNav";
@@ -24,7 +24,7 @@ export function TourismLayout({ module }: { module: ModuleKey }) {
           <RoleSwitcher />
         </header>
         <div className="tourism-subnav intro-mobile-subnav"><strong>{modules[module].label}</strong><SecondaryNav module={module} /></div>
-        <main className="tourism-content"><Outlet /></main>
+        <main className="tourism-content"><AnimatedOutlet /></main>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export function TourismLayout({ module }: { module: ModuleKey }) {
           <RoleSwitcher />
         </header>
         <div className="tourism-subnav tourist-mobile-subnav"><strong>{modules[module].label}</strong><SecondaryNav module={module} /></div>
-        <main className="tourism-content"><Outlet /></main>
+        <main className="tourism-content"><AnimatedOutlet /></main>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export function TourismLayout({ module }: { module: ModuleKey }) {
           <RoleSwitcher />
         </header>
         <div className="tourism-subnav guide-mobile-subnav"><strong>{modules[module].label}</strong><SecondaryNav module={module} /></div>
-        <main className="tourism-content"><Outlet /></main>
+        <main className="tourism-content"><AnimatedOutlet /></main>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export function TourismLayout({ module }: { module: ModuleKey }) {
           <RoleSwitcher />
         </header>
         <div className="tourism-subnav student-mobile-subnav"><strong>{modules[module].label}</strong><SecondaryNav module={module} /></div>
-        <main className="tourism-content"><Outlet /></main>
+        <main className="tourism-content"><AnimatedOutlet /></main>
       </div>
     );
   }
@@ -109,7 +109,7 @@ export function TourismLayout({ module }: { module: ModuleKey }) {
         <RoleSwitcher />
       </header>
       <div className="tourism-subnav"><strong>{modules[module].label}</strong><SecondaryNav module={module} /></div>
-      <main className="tourism-content"><Outlet /></main>
+      <main className="tourism-content"><AnimatedOutlet /></main>
     </div>
   );
 }

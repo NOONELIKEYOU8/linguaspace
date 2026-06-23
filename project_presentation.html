@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语界 LinguaSpace 项目展示汇报</title>
+  <style>
+    :root {
+      --primary: #0f746c;
+      --primary-2: #0a5d63;
+      --deep: #083843;
+      --ink: #101820;
+      --muted: #52636a;
+      --paper: #ffffff;
+      --soft: #eff6f3;
+      --soft-2: #f7faf7;
+      --gold: #c99b45;
+      --coral: #d96f52;
+      --blue: #496f9f;
+      --line: #d7e3df;
+      --shadow: 0 18px 36px rgba(6, 42, 46, 0.22);
+      --soft-shadow: 0 10px 22px rgba(6, 42, 46, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(15, 116, 108, 0.18), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(201, 155, 69, 0.15), transparent 28%),
+        #e9eeeb;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    b {
+      color: var(--deep);
+      font-weight: 900;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    .deck {
+      position: relative;
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+      margin: auto;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 24px 70px rgba(0, 0, 0, 0.16);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .slide.active {
+      display: block;
+      animation: fade 180ms ease-out;
+    }
+
+    .content-slide.active {
+      display: grid;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0.55;
+        transform: translateX(5px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .corner-bars {
+      position: absolute;
+      width: 210px;
+      height: 88px;
+      pointer-events: none;
+    }
+
+    .corner-bars.top-left {
+      top: 4.6%;
+      left: 4%;
+    }
+
+    .corner-bars.bottom-right {
+      right: 4%;
+      bottom: 3.8%;
+      transform: rotate(180deg);
+    }
+
+    .corner-bars span {
+      display: block;
+      height: 9px;
+      margin-bottom: 22px;
+      border-radius: 2px;
+      background: var(--deep);
+    }
+
+    .corner-bars span:nth-child(1) {
+      width: 126px;
+    }
+
+    .corner-bars span:nth-child(2) {
+      width: 206px;
+    }
+
+    .corner-bars span:nth-child(3) {
+      width: 86px;
+    }
+
+    .cover {
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.84)),
+        url("project_presentation_assets/intro-overview-hero-yunnan-ai.png") center / cover no-repeat;
+    }
+
+    .ynu-logo {
+      display: block;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .cover-logo {
+      position: absolute;
+      top: 4.8%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 112px;
+    }
+
+    .brand-mark {
+      position: absolute;
+      top: 18.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      color: var(--deep);
+      text-align: center;
+    }
+
+    .brand-mark strong {
+      display: block;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .brand-mark span {
+      display: block;
+      margin-top: 8px;
+      color: var(--primary);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .cover-band {
+      position: absolute;
+      top: 31.8%;
+      left: 0;
+      right: 0;
+      height: 36%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      background:
+        linear-gradient(90deg, rgba(8, 56, 67, 0.96), rgba(15, 116, 108, 0.92)),
+        url("project_presentation_assets/public-yunnan-sunlit-terraces.jpg") center / cover no-repeat;
+    }
+
+    .cover .defense {
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .cover h1 {
+      max-width: 1240px;
+      font-size: 60px;
+      line-height: 1.12;
+      font-weight: 900;
+    }
+
+    .cover .en {
+      margin-top: 13px;
+      font-size: 26px;
+      line-height: 1.25;
+      opacity: 0.95;
+    }
+
+    .band-line {
+      width: 81%;
+      height: 4px;
+      margin-top: 32px;
+      background: #fff;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    .cover-meta {
+      position: absolute;
+      left: 7.8%;
+      right: 7.8%;
+      bottom: 13.4%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
+      color: var(--deep);
+      font-size: 27px;
+      font-weight: 900;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .meta-icon {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--deep);
+      font-size: 18px;
+      box-shadow: 0 5px 12px rgba(8, 56, 67, 0.18);
+    }
+
+    .content-slide {
+      grid-template-columns: 23.5% 76.5%;
+      background: #fff;
+    }
+
+    .sidebar {
+      position: relative;
+      height: 100%;
+      padding-top: 5.7%;
+      background: #eff1f0;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10.5%;
+      height: 100%;
+      background: #fff;
+    }
+
+    .toc-title {
+      position: relative;
+      z-index: 1;
+      margin-left: 21%;
+      color: var(--deep);
+      font-size: 58px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .toc {
+      position: relative;
+      z-index: 1;
+      margin-top: 48px;
+    }
+
+    .toc-item {
+      position: relative;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      padding-left: 21%;
+      color: #111;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .toc-item.active {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .toc-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -24px;
+      width: 0;
+      height: 0;
+      border-top: 24px solid var(--primary);
+      border-right: 64px solid transparent;
+    }
+
+    .toc-item.active:last-child::after {
+      display: none;
+    }
+
+    .main {
+      position: relative;
+      height: 100%;
+      padding: 3.3% 5.2% 4.3% 4%;
+    }
+
+    .main-logo {
+      position: absolute;
+      top: 2.55%;
+      right: 5.2%;
+      width: 272px;
+      height: 84px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .slide-title {
+      max-width: calc(100% - 330px);
+      padding-top: 8px;
+      color: #000;
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .title-line {
+      width: 100%;
+      height: 8px;
+      margin-top: 24px;
+      background: var(--primary);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
+    }
+
+    .content-area {
+      position: absolute;
+      left: 4%;
+      right: 5.2%;
+      top: 18.5%;
+      bottom: 5.5%;
+    }
+
+    .base-band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 23%;
+      background: var(--primary);
+      z-index: 0;
+    }
+
+    .white-panel {
+      position: absolute;
+      z-index: 1;
+      left: 5.8%;
+      right: 5.8%;
+      top: 0;
+      bottom: 4.8%;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5% 3.35%;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .white-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, rgba(15, 116, 108, 0.055), transparent 30%),
+        radial-gradient(circle at 94% 13%, rgba(201, 155, 69, 0.10), transparent 18%);
+    }
+
+    .panel-title {
+      position: relative;
+      z-index: 1;
+      align-self: center;
+      min-width: 42%;
+      margin-bottom: 16px;
+      padding: 12px 36px;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 6px 12px rgba(15, 116, 108, 0.16);
+      text-align: center;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .panel-body {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .grid2,
+    .grid3 {
+      display: grid;
+      gap: 20px;
+      height: 100%;
+    }
+
+    .grid2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 15px 17px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 6px;
+      background: var(--primary);
+    }
+
+    .card.gold::after {
+      background: var(--gold);
+    }
+
+    .card.coral::after {
+      background: var(--coral);
+    }
+
+    .card.blue::after {
+      background: var(--blue);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      color: var(--deep);
+      font-size: 21px;
+      line-height: 1.24;
+      font-weight: 900;
+    }
+
+    .card p,
+    .card li {
+      margin: 0.32em 0;
+      color: #111;
+      font-size: 16px;
+      line-height: 1.38;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15em;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border: 1px solid #d3ded9;
+      border-radius: 999px;
+      color: var(--deep);
+      background: #f0f6f3;
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .num {
+      display: inline-flex;
+      width: 36px;
+      height: 36px;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+
+    .visual-box {
+      position: relative;
+      min-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff, #f7faf8);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .visual-title {
+      margin-bottom: 10px;
+      color: var(--deep);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .pain-visual {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #d4e1dc;
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.88)),
+        url("project_presentation_assets/intro-scenario-multilingual-visitors.png") center / cover no-repeat;
+    }
+
+    .pain-label {
+      position: absolute;
+      padding: 8px 11px;
+      border: 1px solid #d7e0dd;
+      border-radius: 8px;
+      color: var(--deep);
+      background: #fff;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .pl1 { left: 8%; top: 12%; }
+    .pl2 { right: 8%; top: 35%; }
+    .pl3 { left: 14%; bottom: 12%; }
+
+    .pain-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .pain-card-grid .card {
+      min-width: 0;
+      padding: 13px 15px;
+    }
+
+    .pain-card-grid .card h3 {
+      margin-bottom: 6px;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+
+    .pain-card-grid .card p {
+      font-size: 14.5px;
+      line-height: 1.34;
+    }
+
+    .pain-card-grid .num {
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+    }
+
+    .visual-box .note {
+      flex: 0 0 auto;
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .goal-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .goal-card {
+      position: relative;
+      display: grid;
+      align-content: start;
+      min-width: 0;
+      overflow: hidden;
+      padding: 18px 20px 16px;
+      border: 1px solid rgba(15, 116, 108, 0.18);
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(15, 116, 108, 0.13), rgba(255, 255, 255, 0.94) 46%),
+        #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .goal-card:nth-child(2) {
+      border-color: rgba(201, 155, 69, 0.28);
+      background: linear-gradient(145deg, rgba(201, 155, 69, 0.16), rgba(255, 255, 255, 0.95) 46%), #fff;
+    }
+
+    .goal-card:nth-child(3) {
+      border-color: rgba(43, 111, 161, 0.26);
+      background: linear-gradient(145deg, rgba(43, 111, 161, 0.15), rgba(255, 255, 255, 0.95) 46%), #fff;
+    }
+
+    .goal-card:nth-child(4) {
+      border-color: rgba(207, 92, 54, 0.24);
+      background: linear-gradient(145deg, rgba(207, 92, 54, 0.14), rgba(255, 255, 255, 0.95) 46%), #fff;
+    }
+
+    .goal-top {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .goal-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 8px 16px rgba(15, 116, 108, 0.22);
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .goal-card:nth-child(2) .goal-icon {
+      background: var(--gold);
+      box-shadow: 0 8px 16px rgba(201, 155, 69, 0.22);
+    }
+
+    .goal-card:nth-child(3) .goal-icon {
+      background: var(--blue);
+      box-shadow: 0 8px 16px rgba(43, 111, 161, 0.20);
+    }
+
+    .goal-card:nth-child(4) .goal-icon {
+      background: var(--coral);
+      box-shadow: 0 8px 16px rgba(207, 92, 54, 0.20);
+    }
+
+    .goal-card b {
+      display: block;
+      color: var(--deep);
+      font-size: 23px;
+      line-height: 1.24;
+      font-weight: 900;
+    }
+
+    .goal-card p {
+      margin-top: 12px;
+      color: #222;
+      font-size: 17px;
+      line-height: 1.42;
+    }
+
+    .arch-layout {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+      height: calc(100% - 37px);
+      min-height: 0;
+    }
+
+    .arch-col {
+      display: grid;
+      grid-template-rows: auto repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      min-width: 0;
+      padding: 12px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(15, 116, 108, 0.12), rgba(255, 255, 255, 0.94)),
+        #fff;
+      box-shadow: var(--soft-shadow);
+      border: 1px solid rgba(15, 116, 108, 0.18);
+    }
+
+    .arch-col.core-lane {
+      border-color: rgba(201, 155, 69, 0.3);
+      background:
+        linear-gradient(180deg, rgba(201, 155, 69, 0.15), rgba(255, 255, 255, 0.96)),
+        #fff;
+    }
+
+    .arch-col.data-lane {
+      border-color: rgba(43, 111, 161, 0.26);
+      background:
+        linear-gradient(180deg, rgba(43, 111, 161, 0.13), rgba(255, 255, 255, 0.96)),
+        #fff;
+    }
+
+    .arch-head {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+    }
+
+    .arch-head span {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .core-lane .arch-head span {
+      background: var(--gold);
+    }
+
+    .data-lane .arch-head span {
+      background: var(--blue);
+    }
+
+    .arch-head b {
+      display: block;
+      color: var(--deep);
+      font-size: 20px;
+      line-height: 1.16;
+    }
+
+    .arch-head small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .arch-node {
+      min-width: 0;
+      overflow: hidden;
+      padding: 10px 12px;
+      border: 1px solid rgba(15, 116, 108, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 10px 18px rgba(27, 54, 50, 0.07);
+    }
+
+    .arch-node strong {
+      display: block;
+      color: var(--deep);
+      overflow-wrap: anywhere;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .arch-node span {
+      display: block;
+      margin-top: 5px;
+      color: #333;
+      overflow-wrap: anywhere;
+      font-size: 13.2px;
+      line-height: 1.3;
+    }
+
+    .arch-core {
+      display: grid;
+      grid-template-rows: auto repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .arch-arrow {
+      display: none;
+    }
+
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .flow-step {
+      padding: 5px 6px;
+      border: 1px solid #d5e1dc;
+      border-radius: 8px;
+      color: var(--deep);
+      background: #fff;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .function-showcase {
+      display: grid;
+      grid-template-columns: 1.05fr 1.25fr;
+      gap: 16px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .function-side {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .function-item {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      padding: 15px 16px;
+      border: 1px solid rgba(15, 116, 108, 0.16);
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(15, 116, 108, 0.10), rgba(255, 255, 255, 0.96) 48%),
+        #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .function-hero {
+      display: grid;
+      align-content: space-between;
+      min-height: 0;
+      padding: 22px 24px;
+      color: #fff;
+      background:
+        linear-gradient(145deg, rgba(8, 56, 67, 0.96), rgba(15, 116, 108, 0.90)),
+        url("project_presentation_assets/public-yunnan-sunlit-terraces.jpg") center / cover no-repeat;
+      border: 0;
+    }
+
+    .function-hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--gold), var(--coral));
+    }
+
+    .function-pill {
+      display: inline-flex;
+      width: max-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .function-item b {
+      display: block;
+      color: var(--deep);
+      font-size: 19px;
+      line-height: 1.25;
+    }
+
+    .function-hero b {
+      color: #fff;
+      font-size: 29px;
+      line-height: 1.18;
+    }
+
+    .function-item p {
+      margin-top: 8px;
+      color: #222;
+      font-size: 14.5px;
+      line-height: 1.36;
+    }
+
+    .function-hero p {
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .function-item code {
+      display: block;
+      margin-top: 9px;
+      color: var(--primary);
+      font-family: Consolas, "SFMono-Regular", monospace;
+      overflow-wrap: anywhere;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 800;
+    }
+
+    .function-hero code {
+      color: #ffe6aa;
+      font-size: 12.5px;
+    }
+
+    .tech-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .tech-block {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tech-pill {
+      min-height: 82px;
+      padding: 13px 16px;
+      border-left: 8px solid var(--primary);
+      background: #f7faf8;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .tech-pill:nth-child(2) {
+      border-left-color: var(--gold);
+    }
+
+    .tech-pill:nth-child(3) {
+      border-left-color: var(--blue);
+    }
+
+    .tech-pill b {
+      display: block;
+      font-size: 18px;
+    }
+
+    .tech-pill span {
+      display: block;
+      margin-top: 5px;
+      color: #222;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .pipeline-box {
+      height: 100%;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .pipeline-row {
+      display: grid;
+      grid-template-columns: 1fr 0.24fr 1fr 0.24fr 1fr;
+      align-items: center;
+      gap: 0;
+      height: 46%;
+      margin-top: 10px;
+    }
+
+    .pipe {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      border: 1px solid #d6e1dc;
+      border-radius: 10px;
+      text-align: center;
+      background: #f7faf8;
+    }
+
+    .pipe b {
+      display: block;
+      font-size: 17px;
+    }
+
+    .pipe span {
+      margin-top: 5px;
+      color: #333;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .arrow {
+      height: 4px;
+      position: relative;
+      background: var(--primary);
+    }
+
+    .arrow::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -1px;
+      transform: translateY(-50%);
+      border-left: 14px solid var(--primary);
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+    }
+
+    .system-chain {
+      display: grid;
+      grid-template-rows: 1fr 106px;
+      gap: 12px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .chain-primary {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .chain-primary::before {
+      content: "";
+      position: absolute;
+      top: 31px;
+      left: 7%;
+      right: 7%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--gold), var(--blue), var(--coral));
+      opacity: 0.38;
+    }
+
+    .chain-step {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      overflow: hidden;
+      padding: 12px 11px;
+      border: 1px solid rgba(15, 116, 108, 0.16);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(15, 116, 108, 0.08), rgba(255, 255, 255, 0.96)),
+        #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .chain-step:nth-child(2) {
+      background: linear-gradient(180deg, rgba(201, 155, 69, 0.12), rgba(255, 255, 255, 0.96)), #fff;
+    }
+
+    .chain-step:nth-child(3) {
+      background: linear-gradient(180deg, rgba(43, 111, 161, 0.11), rgba(255, 255, 255, 0.96)), #fff;
+    }
+
+    .chain-step:nth-child(4) {
+      background: linear-gradient(180deg, rgba(15, 116, 108, 0.14), rgba(255, 255, 255, 0.96)), #fff;
+    }
+
+    .chain-step:nth-child(5) {
+      background: linear-gradient(180deg, rgba(207, 92, 54, 0.12), rgba(255, 255, 255, 0.96)), #fff;
+    }
+
+    .chain-num {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-size: 15px;
+      font-weight: 900;
+      box-shadow: 0 8px 15px rgba(15, 116, 108, 0.22);
+    }
+
+    .chain-step:nth-child(2) .chain-num {
+      background: var(--gold);
+      box-shadow: 0 8px 15px rgba(201, 155, 69, 0.24);
+    }
+
+    .chain-step:nth-child(3) .chain-num {
+      background: var(--blue);
+      box-shadow: 0 8px 15px rgba(43, 111, 161, 0.22);
+    }
+
+    .chain-step:nth-child(5) .chain-num {
+      background: var(--coral);
+      box-shadow: 0 8px 15px rgba(207, 92, 54, 0.22);
+    }
+
+    .chain-step b {
+      display: block;
+      color: var(--deep);
+      font-size: 17px;
+      line-height: 1.18;
+      font-weight: 900;
+    }
+
+    .chain-step p {
+      margin-top: 7px;
+      color: #23312e;
+      font-size: 12.6px;
+      line-height: 1.34;
+    }
+
+    .chain-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .chain-tags span {
+      padding: 4px 6px;
+      border-radius: 999px;
+      color: var(--deep);
+      background: rgba(15, 116, 108, 0.10);
+      font-size: 10.5px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .chain-support {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .support-unit {
+      min-width: 0;
+      overflow: hidden;
+      padding: 10px;
+      border: 1px solid rgba(15, 116, 108, 0.18);
+      border-radius: 12px;
+      background: var(--deep);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(8, 56, 67, 0.12);
+    }
+
+    .support-unit:nth-child(2) {
+      background: #2b6fa1;
+    }
+
+    .support-unit:nth-child(3) {
+      background: #8b6a25;
+    }
+
+    .support-unit:nth-child(4) {
+      background: #31544f;
+    }
+
+    .support-unit b {
+      display: block;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .support-unit span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 11.2px;
+      line-height: 1.23;
+    }
+
+    .shot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+      height: 100%;
+    }
+
+    .shot {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      height: 128px;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .shot div {
+      padding: 11px 13px 13px;
+    }
+
+    .shot b {
+      display: block;
+      font-size: 17px;
+    }
+
+    .shot p {
+      margin-top: 5px;
+      color: #222;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .summary-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .summary-block {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      min-width: 0;
+    }
+
+    .limit-card {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 9px 10px;
+      border: 1px solid #dce5e1;
+      border-radius: 10px;
+      background: #f8faf9;
+    }
+
+    .limit-card .mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .limit-card b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .limit-card span {
+      display: block;
+      color: #222;
+      font-size: 12.2px;
+      line-height: 1.3;
+    }
+
+    .future-box {
+      padding: 12px;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--deep);
+    }
+
+    .future-box b {
+      display: block;
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .future-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 9px;
+    }
+
+    .future-tags span {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+
+    .summary-block .card {
+      padding: 12px 14px;
+    }
+
+    .summary-block .card h3 {
+      font-size: 18px;
+    }
+
+    .summary-block .card li {
+      font-size: 12.5px;
+      line-height: 1.28;
+    }
+
+    .summary-block .note {
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 1.32;
+    }
+
+    .pager {
+      position: absolute;
+      right: 22px;
+      bottom: 16px;
+      z-index: 10;
+      color: var(--deep);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 10;
+      width: 100%;
+      height: 6px;
+      background: rgba(15, 116, 108, 0.14);
+    }
+
+    .progress-bar {
+      width: 12.5%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--gold), var(--coral));
+      transition: width 180ms ease;
+    }
+
+    .nav-btn {
+      position: absolute;
+      z-index: 12;
+      top: 50%;
+      width: 46px;
+      height: 76px;
+      border: 0;
+      color: #fff;
+      background: rgba(8, 56, 67, 0.78);
+      cursor: pointer;
+      transform: translateY(-50%);
+    }
+
+    .nav-btn.prev {
+      left: 0;
+      border-radius: 0 12px 12px 0;
+    }
+
+    .nav-btn.next {
+      right: 0;
+      border-radius: 12px 0 0 12px;
+    }
+
+    @media (max-width: 980px) {
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        width: 100vw;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .slide,
+      .slide.active,
+      .content-slide.active {
+        position: relative;
+        display: block;
+        min-height: 100vh;
+      }
+
+      .content-slide {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        min-height: 100vh;
+        padding: 28px 22px 78px;
+      }
+
+      .main-logo {
+        position: static;
+        width: max-content;
+        margin-left: auto;
+      }
+
+      .content-area {
+        position: relative;
+        inset: auto;
+        margin-top: 22px;
+      }
+
+      .white-panel {
+        position: relative;
+        inset: auto;
+      }
+
+      .cover-meta,
+      .grid2,
+      .grid3,
+      .goal-matrix,
+      .arch-layout,
+      .function-showcase,
+      .function-side,
+      .system-chain,
+      .chain-primary,
+      .chain-support,
+      .tech-layout,
+      .shot-grid,
+      .summary-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .system-chain {
+        grid-template-rows: auto;
+      }
+
+      .chain-primary::before {
+        display: none;
+      }
+
+      .cover h1 {
+        font-size: 40px;
+      }
+
+      .cover .defense {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="语界 LinguaSpace 项目展示汇报">
+    <section class="slide cover active">
+      <div class="corner-bars top-left"><span></span><span></span><span></span></div>
+      <div class="corner-bars bottom-right"><span></span><span></span><span></span></div>
+      <img class="ynu-logo cover-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+      <div class="brand-mark">
+        <div>
+          <strong>语界 LinguaSpace</strong>
+          <span>Yunnan Cultural Tourism AI Platform</span>
+        </div>
+      </div>
+      <div class="cover-band">
+        <div class="defense">项目展示汇报</div>
+        <h1>可信多语 AI 导览与导游实训平台</h1>
+        <div class="en">React + FastAPI + RAG + Cultural Knowledge Graph</div>
+        <div class="band-line"></div>
+      </div>
+      <div class="cover-meta">
+        <div class="meta-item"><span class="meta-icon">人</span>团队：项目组</div>
+        <div class="meta-item"><span class="meta-icon">时</span>讲述：约 8 分钟</div>
+        <div class="meta-item"><span class="meta-icon">日</span>日期：2026.06</div>
+      </div>
+    </section>
+
+    <section class="slide content-slide" data-section="背景痛点">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item active">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">背景与痛点</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">为什么需要这个系统</div>
+            <div class="panel-body grid2">
+              <div class="pain-card-grid">
+                <article class="card"><h3><span class="num">1</span>跨语言现场服务不足</h3><p>云南文旅面向南亚、东南亚游客时，语言、文化礼仪和即时咨询都需要更稳定的数字导览能力。</p></article>
+                <article class="card gold"><h3><span class="num">2</span>文化解释不能泛化生成</h3><p>景点历史、民族文化、宗教礼仪和非遗内容必须依赖可信知识库，不能把大模型自由发挥当作答案。</p></article>
+                <article class="card blue"><h3><span class="num">3</span>复杂问题需要真人兜底</h3><p>高风险、安全、投诉和深度文化问题需要导游接管、修正和审核回流，形成服务闭环。</p></article>
+                <article class="card coral"><h3><span class="num">4</span>导游训练缺少数据化反馈</h3><p>高校导游人才培养需要虚拟游客、语音讲解、评分报告和知识覆盖反馈，而不是一次性课堂练习。</p></article>
+              </div>
+              <aside class="visual-box">
+                <div class="visual-title">文旅现场的三类断点</div>
+                <div class="pain-visual">
+                  <span class="pain-label pl1">多语沟通</span>
+                  <span class="pain-label pl2">可信讲解</span>
+                  <span class="pain-label pl3">人工协同</span>
+                </div>
+                <p class="note">系统围绕多语沟通、可信讲解和人工协同三类场景，形成从游客服务到知识治理的闭环。</p>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="目标定位">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item active">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">项目目标与用户场景</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">让游客问得到，导游接得住，知识可回流</div>
+            <div class="panel-body goal-matrix">
+              <article class="goal-card">
+                <div class="goal-top"><span class="goal-icon">游</span><b>游客端：多模态导览</b></div>
+                <p>用文字、语音、图片提问，获得基于云南文旅知识库和文化图谱的多语回答。</p>
+                <div class="tag-row"><span class="tag">文字问答</span><span class="tag">语音导览</span><span class="tag">拍照识别</span></div>
+              </article>
+              <article class="goal-card">
+                <div class="goal-top"><span class="goal-icon">导</span><b>导游端：人机协同</b></div>
+                <p>导游查看会话、接管 AI 对话、提交回答修正，让复杂问题进入人工服务闭环。</p>
+                <div class="tag-row"><span class="tag">会话监控</span><span class="tag">人工接管</span><span class="tag">修正回流</span></div>
+              </article>
+              <article class="goal-card">
+                <div class="goal-top"><span class="goal-icon">训</span><b>学员端：AI 导游实训</b></div>
+                <p>面对虚拟游客完成讲解，系统结合知识覆盖、表达质量和模型评分生成训练反馈。</p>
+                <div class="tag-row"><span class="tag">训练场景</span><span class="tag">语音转写</span><span class="tag">多维评分</span></div>
+              </article>
+              <article class="goal-card">
+                <div class="goal-top"><span class="goal-icon">治</span><b>管理端：知识与系统治理</b></div>
+                <p>维护知识文档、术语、图谱和审核任务，并查看健康检查、请求链路与模型日志。</p>
+                <div class="tag-row"><span class="tag">RAG</span><span class="tag">图谱</span><span class="tag">运维观测</span></div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="系统架构">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item active">系统架构</div>
+          <div class="toc-item">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">系统架构与数据流</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">React 前端 + FastAPI 后端 + 本地基础设施</div>
+            <div class="panel-body">
+              <div class="arch-layout">
+                <div class="arch-col">
+                  <div class="arch-head"><span>01</span><b>前端多端入口<small>React 18 + TypeScript + Router</small></b></div>
+                  <div class="arch-node"><strong>六个一级模块</strong><span>intro / tourist / guide / student / knowledge / system。</span></div>
+                  <div class="arch-node"><strong>统一交互底座</strong><span>RootLayout、TourismLayout、AdminLayout 和 API Client 统一接入后端。</span></div>
+                </div>
+                <div class="arch-col core-lane">
+                  <div class="arch-head"><span>02</span><b>FastAPI 业务层<small>AI 编排 + 可信问答</small></b></div>
+                  <div class="arch-node"><strong>核心 API</strong><span>chat、image、audio、knowledge、graph、training、system。</span></div>
+                  <div class="arch-node"><strong>回答链路</strong><span>术语归一、知识检索、图谱补充、可靠性阈值、模型生成。</span></div>
+                </div>
+                <div class="arch-col data-lane">
+                  <div class="arch-head"><span>03</span><b>数据与基础设施<small>运行数据 + 可扩展组件</small></b></div>
+                  <div class="arch-node"><strong>MySQL 运行库</strong><span>会话、消息、用户、审核、术语、训练、修正、日志。</span></div>
+                  <div class="arch-node"><strong>Redis / MinIO / Neo4j</strong><span>缓存、对象存储与图谱镜像支撑后续多模态资料和文化关系扩展。</span></div>
+                </div>
+              </div>
+              <div class="flow-strip">
+                <div class="flow-step">用户输入</div>
+                <div class="flow-step">前端请求</div>
+                <div class="flow-step">FastAPI 接入</div>
+                <div class="flow-step">检索 + 图谱</div>
+                <div class="flow-step">模型生成</div>
+                <div class="flow-step">记录与回流</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="功能展示">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item active">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">核心功能与代码位置</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">一条游客服务主线，四个后台支撑模块</div>
+            <div class="panel-body function-showcase">
+              <article class="function-item function-hero">
+                <span class="function-pill">核心体验</span>
+                <div>
+                  <b>游客多语导览链路</b>
+                  <p>聊天、语音、图片识别和路线推荐统一进入可信问答链路，输出回答、来源数和可靠性状态。</p>
+                </div>
+                <code>TouristChatPage.tsx / /api/chat/stream / /api/image/ask / /api/audio/*</code>
+              </article>
+              <div class="function-side">
+                <article class="function-item"><b>导游协同</b><p>会话列表、人工接管、导游回复、修正与案例库。</p><code>GuidePages.tsx / /api/collaboration/*</code></article>
+                <article class="function-item"><b>AI 导游实训</b><p>训练场景、语音转写、评分报告和历史记录。</p><code>StudentPages.tsx / backend/app/scoring.py</code></article>
+                <article class="function-item"><b>知识库工程</b><p>文档上传、切片、审核、术语、图谱和 RAG 测试。</p><code>KnowledgePages.tsx / /api/knowledge/*</code></article>
+                <article class="function-item"><b>系统与状态</b><p>用户权限、健康检查、日志指标，以及 Loading / Empty / Error 兜底。</p><code>SystemPages.tsx / components/common/*</code></article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="技术链路">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item">功能展示</div>
+          <div class="toc-item active">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">完整系统链路</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">从多端输入到可信输出与服务回流</div>
+            <div class="panel-body system-chain">
+              <div class="chain-primary">
+                <article class="chain-step">
+                  <span class="chain-num">01</span>
+                  <b>多端输入</b>
+                  <p>游客文字、语音、图片提问；导游接管会话；学员进入训练场景。</p>
+                  <div class="chain-tags"><span>text</span><span>audio</span><span>image</span></div>
+                </article>
+                <article class="chain-step">
+                  <span class="chain-num">02</span>
+                  <b>前端交互层</b>
+                  <p>React Router 分发游客端、导游端、学员端和知识管理端页面。</p>
+                  <div class="chain-tags"><span>React</span><span>API Client</span></div>
+                </article>
+                <article class="chain-step">
+                  <span class="chain-num">03</span>
+                  <b>FastAPI 编排</b>
+                  <p>chat、image、audio、training、knowledge 等接口统一接入业务链路。</p>
+                  <div class="chain-tags"><span>/api/chat</span><span>/api/image</span></div>
+                </article>
+                <article class="chain-step">
+                  <span class="chain-num">04</span>
+                  <b>知识与模型增强</b>
+                  <p>术语归一、知识检索、图谱关系补充，再调用文本、视觉和语音模型。</p>
+                  <div class="chain-tags"><span>RAG</span><span>Graph</span><span>Ollama</span></div>
+                </article>
+                <article class="chain-step">
+                  <span class="chain-num">05</span>
+                  <b>可信输出与回流</b>
+                  <p>按来源和可靠性阈值输出答案，低可信问题进入兜底、接管和审核回流。</p>
+                  <div class="chain-tags"><span>sources</span><span>review</span><span>logs</span></div>
+                </article>
+              </div>
+              <div class="chain-support">
+                <div class="support-unit"><b>运行数据</b><span>MySQL 承载会话、消息、用户、训练、修正与审核记录。</span></div>
+                <div class="support-unit"><b>多模态资源</b><span>MinIO 管理上传资料，Redis 提供缓存，Neo4j 承载图谱镜像。</span></div>
+                <div class="support-unit"><b>模型能力</b><span>qwen3.5 文本、qwen3-vl 视觉、faster-whisper ASR、Windows SAPI TTS。</span></div>
+                <div class="support-unit"><b>观测治理</b><span>请求追踪、模型调用日志、系统健康检查和审核任务共同支撑闭环。</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="功能展示">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item active">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">页面与交互展示</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">主要页面与交互路径</div>
+            <div class="panel-body shot-grid">
+              <article class="shot"><img src="project_presentation_assets/tourist-chat.png" alt="游客聊天页截图" /><div><b>游客多语聊天</b><p>历史会话、语言切换、图片/语音入口和人工导游申请。</p></div></article>
+              <article class="shot"><img src="project_presentation_assets/tourist-image.png" alt="图片识别页截图" /><div><b>拍照识别问答</b><p>上传图片后由视觉模型提取线索，再进入可信文化讲解。</p></div></article>
+              <article class="shot"><img src="project_presentation_assets/guide-dashboard.png" alt="导游工作台截图" /><div><b>导游协同工作台</b><p>近期游客会话、接管入口和回答修正入口集中展示。</p></div></article>
+              <article class="shot"><img src="project_presentation_assets/knowledge-graph.png" alt="知识图谱页截图" /><div><b>文化知识图谱</b><p>真实三元组派生节点和关系，用于补充文化关联解释。</p></div></article>
+              <article class="shot"><img src="project_presentation_assets/student-training.png" alt="学员训练页截图" /><div><b>AI 导游实训</b><p>虚拟游客提问、语音回答、多维评分和改进建议。</p></div></article>
+              <article class="shot"><img src="project_presentation_assets/system-health.png" alt="系统健康页截图" /><div><b>系统健康监控</b><p>API、数据库、缓存、对象存储、图谱和模型服务状态。</p></div></article>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <section class="slide content-slide" data-section="总结展望">
+      <aside class="sidebar">
+        <div class="toc-title">目录</div>
+        <nav class="toc">
+          <div class="toc-item">背景痛点</div>
+          <div class="toc-item">目标定位</div>
+          <div class="toc-item">系统架构</div>
+          <div class="toc-item">功能展示</div>
+          <div class="toc-item">技术链路</div>
+          <div class="toc-item active">总结展望</div>
+        </nav>
+      </aside>
+      <main class="main">
+        <img class="ynu-logo main-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学校徽与校名" />
+        <h2 class="slide-title">项目亮点、总结与展望</h2>
+        <div class="title-line"></div>
+        <div class="content-area">
+          <div class="base-band"></div>
+          <div class="white-panel">
+            <div class="panel-title">当前成果与后续建设方向</div>
+            <div class="panel-body summary-layout">
+              <section class="summary-block">
+                <div class="limit-card"><span class="mark">1</span><div><b>接口状态透明</b><span>前端统一处理加载、空状态和异常状态，避免用户在关键流程中失去反馈。</span></div></div>
+                <div class="limit-card"><span class="mark">2</span><div><b>可信 RAG 门槛</b><span>后端按来源数量和分数判断可靠性，低可信问题进入明确兜底流程。</span></div></div>
+                <div class="limit-card"><span class="mark">3</span><div><b>导游修正回流</b><span>导游修正进入 review_tasks，审核通过后才写入知识库，形成治理闭环。</span></div></div>
+                <div class="limit-card"><span class="mark">4</span><div><b>服务与实训共用底座</b><span>游客问答、导游协同、学员评分、知识管理都围绕同一文旅知识体系展开。</span></div></div>
+              </section>
+              <section class="summary-block">
+                <article class="card"><h3>当前完成情况</h3><ul><li>React 多模块前端和 FastAPI 接口覆盖主要演示链路。</li><li>Docker 编排提供 MySQL、Redis、MinIO、Neo4j 等基础设施。</li><li>页面演示、种子数据和后端测试支撑项目答辩展示。</li></ul></article>
+                <div class="future-box">
+                  <b>后续优化方向</b>
+                  <div class="future-tags">
+                    <span>向量检索与 pgvector</span>
+                    <span>多语评测集</span>
+                    <span>ASR 设备复查</span>
+                    <span>图谱交互增强</span>
+                    <span>天气与票务动态服务</span>
+                    <span>端到端测试</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <button class="nav-btn prev" type="button" aria-label="上一页">‹</button>
+    <button class="nav-btn next" type="button" aria-label="下一页">›</button>
+    <div class="pager" id="pager">1 / 8</div>
+    <div class="progress"><div class="progress-bar" id="progress"></div></div>
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const pager = document.getElementById("pager");
+    const progress = document.getElementById("progress");
+    let current = 0;
+    let wheelLocked = false;
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === current));
+      pager.textContent = `${current + 1} / ${slides.length}`;
+      progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+      history.replaceState(null, "", `#${current + 1}`);
+    }
+
+    function next() {
+      showSlide(current + 1);
+    }
+
+    function prev() {
+      showSlide(current - 1);
+    }
+
+    document.querySelector(".next").addEventListener("click", next);
+    document.querySelector(".prev").addEventListener("click", prev);
+
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
+        event.preventDefault();
+        next();
+      }
+      if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(event.key)) {
+        event.preventDefault();
+        prev();
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        showSlide(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        showSlide(slides.length - 1);
+      }
+    });
+
+    window.addEventListener("wheel", (event) => {
+      if (Math.abs(event.deltaY) < 18 || wheelLocked) return;
+      wheelLocked = true;
+      event.deltaY > 0 ? next() : prev();
+      window.setTimeout(() => {
+        wheelLocked = false;
+      }, 520);
+    }, { passive: true });
+
+    let startX = null;
+    document.addEventListener("touchstart", (event) => {
+      startX = event.touches[0].clientX;
+    }, { passive: true });
+    document.addEventListener("touchend", (event) => {
+      if (startX === null) return;
+      const dx = event.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 45) dx < 0 ? next() : prev();
+      startX = null;
+    }, { passive: true });
+
+    const hashIndex = parseInt(location.hash.replace("#", ""), 10);
+    if (!Number.isNaN(hashIndex) && hashIndex >= 1 && hashIndex <= slides.length) {
+      showSlide(hashIndex - 1);
+    } else {
+      showSlide(0);
+    }
+  </script>
+</body>
+</html>
