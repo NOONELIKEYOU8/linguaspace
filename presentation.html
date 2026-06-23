@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语界 LinguaSpace 项目评审展示</title>
+  <style>
+    :root {
+      --ink: #f7fbf8;
+      --muted: rgba(247, 251, 248, 0.72);
+      --dark: #071f25;
+      --deep: #0b3437;
+      --teal: #12a394;
+      --mint: #8ce0c8;
+      --gold: #d6a84b;
+      --coral: #ee7a4e;
+      --blue: #57a6d8;
+      --panel: rgba(255, 255, 255, 0.12);
+      --panel-2: rgba(255, 255, 255, 0.18);
+      --line: rgba(255, 255, 255, 0.22);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+      --soft: 0 16px 42px rgba(0, 0, 0, 0.22);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(18, 163, 148, 0.28), transparent 30%),
+        radial-gradient(circle at 88% 78%, rgba(214, 168, 75, 0.22), transparent 34%),
+        linear-gradient(135deg, #061a20, #0b3437 46%, #071f25);
+      color: var(--ink);
+    }
+
+    .deck {
+      position: relative;
+      width: min(100vw, 177.78vh);
+      height: min(100vh, 56.25vw);
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--dark);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .deck::before,
+    .deck::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .deck::before {
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+      opacity: 0.34;
+    }
+
+    .deck::after {
+      left: -8%;
+      right: -8%;
+      bottom: -22%;
+      height: 42%;
+      background: radial-gradient(ellipse at center, rgba(18, 163, 148, 0.24), transparent 70%);
+      filter: blur(8px);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: 44px 58px 44px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(140, 224, 200, 0.14), transparent 28%),
+        linear-gradient(135deg, rgba(7, 31, 37, 0.98), rgba(10, 58, 60, 0.94));
+      z-index: 2;
+    }
+
+    .slide.active {
+      display: block;
+      animation: slideIn 420ms ease both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.992);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .brand {
+      position: absolute;
+      top: 24px;
+      left: 38px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: var(--ink);
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--teal), var(--gold));
+      box-shadow: 0 10px 28px rgba(18, 163, 148, 0.35);
+      color: #052025;
+      font-weight: 900;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .ynu-logo {
+      position: absolute;
+      top: 24px;
+      right: 40px;
+      z-index: 4;
+      width: 184px;
+      height: 56px;
+      object-fit: contain;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      padding: 7px 12px;
+      border: 1px solid rgba(140, 224, 200, 0.35);
+      border-radius: 999px;
+      color: var(--mint);
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+    }
+
+    .slide-title {
+      margin-top: 12px;
+      max-width: 900px;
+      font-size: 42px;
+      line-height: 1.12;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .slide-subtitle {
+      max-width: 820px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .accent {
+      color: var(--mint);
+    }
+
+    .gold {
+      color: #ffe0a0;
+    }
+
+    .cover {
+      padding: 0;
+      background:
+        linear-gradient(100deg, rgba(5, 25, 31, 0.95) 0%, rgba(8, 56, 67, 0.86) 50%, rgba(5, 25, 31, 0.42) 100%),
+        url("frontend/public/assets/intro-overview-hero-yunnan-ai.png") center / cover no-repeat;
+    }
+
+    .cover .ynu-logo {
+      width: 250px;
+      height: 76px;
+    }
+
+    .cover-content {
+      position: absolute;
+      left: 78px;
+      top: 142px;
+      width: 710px;
+      z-index: 3;
+    }
+
+    .cover h1 {
+      margin-top: 24px;
+      font-size: 72px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+    }
+
+    .cover .tagline {
+      margin-top: 22px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 26px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .member-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.11);
+      backdrop-filter: blur(14px);
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 15px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .member-line b {
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .meta-pill {
+      padding: 11px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .hero-device {
+      position: absolute;
+      right: 72px;
+      bottom: 80px;
+      width: 390px;
+      height: 430px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 34px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      z-index: 3;
+      transform: rotate(2deg);
+    }
+
+    .hero-device img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 24px;
+    }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      height: 100%;
+      padding-top: 44px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--soft);
+    }
+
+    .card {
+      min-width: 0;
+      min-height: 0;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07)),
+        rgba(255, 255, 255, 0.08);
+      box-shadow: var(--soft);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: #052025;
+      background: linear-gradient(135deg, var(--mint), var(--gold));
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      color: #fff;
+      font-size: 22px;
+      line-height: 1.22;
+      font-weight: 900;
+    }
+
+    .card p {
+      margin-top: 10px;
+      color: rgba(247, 251, 248, 0.76);
+      font-size: 14.5px;
+      line-height: 1.42;
+      font-weight: 600;
+    }
+
+    .pain-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 20px;
+      height: 340px;
+    }
+
+    .photo-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      background: #000;
+    }
+
+    .photo-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.78;
+    }
+
+    .photo-label {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 20px;
+      background: rgba(4, 28, 33, 0.72);
+      backdrop-filter: blur(14px);
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .pain-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pain-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 13px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .pain-num {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(140, 224, 200, 0.16);
+      color: var(--mint);
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .pain-item b {
+      display: block;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+
+    .pain-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.32;
+      font-weight: 600;
+    }
+
+    .role-map {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .role-card {
+      position: relative;
+      min-height: 260px;
+      padding: 20px 18px;
+      overflow: hidden;
+    }
+
+    .role-card::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      transform: translate(44%, 44%);
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: rgba(140, 224, 200, 0.12);
+    }
+
+    .role-letter {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      color: #062329;
+      background: linear-gradient(135deg, var(--mint), #fff3bd);
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .solution-map {
+      margin-top: 20px;
+      height: 340px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .solution-core {
+      position: relative;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 22px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(140, 224, 200, 0.32), rgba(18, 163, 148, 0.15) 48%, rgba(255, 255, 255, 0.08) 72%);
+      border: 1px solid rgba(140, 224, 200, 0.34);
+      box-shadow: 0 0 80px rgba(18, 163, 148, 0.22);
+      align-self: center;
+      justify-self: center;
+      width: 292px;
+      height: 292px;
+    }
+
+    .solution-core b {
+      display: block;
+      font-size: 28px;
+      line-height: 1.18;
+      margin-bottom: 12px;
+    }
+
+    .solution-core p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .stack-col {
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .stack-item {
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .stack-item b {
+      display: block;
+      font-size: 17px;
+      color: #fff;
+    }
+
+    .stack-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.38;
+      font-weight: 600;
+    }
+
+    .highlight-board {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      margin-top: 20px;
+      height: 342px;
+    }
+
+    .highlight-main {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      border-radius: 30px;
+      background:
+        linear-gradient(120deg, rgba(18, 163, 148, 0.92), rgba(8, 56, 67, 0.82)),
+        url("frontend/public/assets/intro-feature-trusted-rag.png") center / cover no-repeat;
+      box-shadow: var(--shadow);
+    }
+
+    .highlight-main h3 {
+      max-width: 560px;
+      font-size: 30px;
+      line-height: 1.18;
+    }
+
+    .highlight-main p {
+      max-width: 520px;
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .highlight-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .mini-feature {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .mini-feature i {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(214, 168, 75, 0.18);
+      color: #ffe4a7;
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .mini-feature b {
+      display: block;
+      font-size: 16px;
+    }
+
+    .mini-feature span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.28;
+      font-weight: 600;
+    }
+
+    .screens {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .screen-card {
+      overflow: hidden;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: var(--soft);
+    }
+
+    .screen-card img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .screen-card div {
+      padding: 12px 14px 14px;
+    }
+
+    .screen-card b {
+      display: block;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .screen-card p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.28;
+      font-weight: 600;
+    }
+
+    .scene-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+      height: 342px;
+    }
+
+    .scene {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+      border-radius: 30px;
+      background: #0b3437;
+      box-shadow: var(--soft);
+    }
+
+    .scene img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.42;
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(5, 25, 31, 0.88));
+    }
+
+    .scene-content {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 2;
+    }
+
+    .scene-label {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffe4a7;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .scene h3 {
+      font-size: 23px;
+      line-height: 1.18;
+    }
+
+    .scene p {
+      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      line-height: 1.34;
+      font-weight: 600;
+    }
+
+    .chain {
+      margin-top: 18px;
+      display: grid;
+      grid-template-rows: 1fr 92px;
+      gap: 12px;
+      height: 342px;
+    }
+
+    .chain-main {
+      position: relative;
+      display: grid;
+      grid-template-columns: 0.95fr 1.15fr 1.15fr 0.95fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .chain-main::before {
+      display: none;
+    }
+
+    .flow-lane {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 9px;
+      padding: 12px;
+      min-width: 0;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(140, 224, 200, 0.16), transparent 42%),
+        rgba(255, 255, 255, 0.08);
+    }
+
+    .flow-lane::after {
+      content: "";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      width: 28px;
+      height: 28px;
+      border-top: 3px solid rgba(255, 228, 167, 0.75);
+      border-right: 3px solid rgba(255, 228, 167, 0.75);
+      transform: translateY(-50%) rotate(45deg);
+      z-index: 2;
+    }
+
+    .flow-lane:last-child::after {
+      display: none;
+    }
+
+    .lane-label {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(214, 168, 75, 0.16);
+      color: #ffe4a7;
+      font-size: 12px;
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    .flow-nodes {
+      display: grid;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .flow-lane:first-child .chain-node,
+    .flow-lane:last-child .chain-node {
+      height: 100%;
+    }
+
+    .chain-node {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      min-height: 0;
+      padding: 11px 10px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .chain-node i {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mint);
+      color: #052025;
+      font-style: normal;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .chain-node b {
+      display: block;
+      font-size: 15px;
+      line-height: 1.18;
+    }
+
+    .chain-node p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.24;
+      font-weight: 600;
+    }
+
+    .chain-base {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .base-card {
+      padding: 12px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(18, 163, 148, 0.24), rgba(255, 255, 255, 0.10));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .base-card b {
+      display: block;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .base-card span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.24;
+      font-weight: 600;
+    }
+
+    .result-layout {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 16px;
+      height: 342px;
+    }
+
+    .metric-wall {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .metric strong {
+      display: block;
+      color: #fff;
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.28;
+      font-weight: 700;
+    }
+
+    .montage {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: var(--soft);
+    }
+
+    .montage img {
+      position: absolute;
+      width: 62%;
+      height: 48%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 22px;
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .montage img:nth-child(1) {
+      left: 24px;
+      top: 26px;
+    }
+
+    .montage img:nth-child(2) {
+      right: 24px;
+      top: 120px;
+      z-index: 2;
+    }
+
+    .montage img:nth-child(3) {
+      left: 74px;
+      bottom: 26px;
+      z-index: 3;
+    }
+
+    .compare {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      height: 268px;
+    }
+
+    .compare-card {
+      padding: 22px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.10);
+      box-shadow: var(--soft);
+    }
+
+    .compare-card.good {
+      background:
+        linear-gradient(135deg, rgba(18, 163, 148, 0.32), rgba(255, 255, 255, 0.10)),
+        rgba(255, 255, 255, 0.10);
+      border-color: rgba(140, 224, 200, 0.36);
+    }
+
+    .compare-card h3 {
+      font-size: 25px;
+      line-height: 1.16;
+      margin-bottom: 14px;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.28;
+      font-weight: 700;
+    }
+
+    .check-row i {
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: var(--gold);
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .advantage-footer {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .advantage-pill {
+      padding: 14px 16px;
+    }
+
+    .roadmap {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      height: 318px;
+    }
+
+    .road-card {
+      position: relative;
+      padding: 22px 20px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: var(--soft);
+      overflow: hidden;
+    }
+
+    .road-card::before {
+      content: attr(data-step);
+      position: absolute;
+      right: 22px;
+      top: 16px;
+      color: rgba(255, 255, 255, 0.10);
+      font-size: 68px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .road-card h3 {
+      position: relative;
+      font-size: 23px;
+      line-height: 1.16;
+      margin-bottom: 12px;
+    }
+
+    .road-card p {
+      position: relative;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.34;
+      font-weight: 650;
+    }
+
+    .closing {
+      padding: 0;
+      background:
+        linear-gradient(120deg, rgba(5, 25, 31, 0.92), rgba(18, 163, 148, 0.62)),
+        url("frontend/public/assets/public-yulong-mountain.jpg") center / cover no-repeat;
+    }
+
+    .closing-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 90px;
+      z-index: 3;
+    }
+
+    .closing h2 {
+      font-size: 68px;
+      line-height: 1.12;
+      font-weight: 900;
+      text-shadow: 0 18px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    .closing p {
+      max-width: 790px;
+      margin: 24px auto 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 25px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .pager {
+      position: absolute;
+      right: 42px;
+      bottom: 24px;
+      z-index: 10;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.10);
+      z-index: 10;
+    }
+
+    .progress-bar {
+      width: 8.333%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--gold), var(--coral));
+      transition: width 260ms ease;
+    }
+
+    .nav {
+      position: absolute;
+      left: 42px;
+      bottom: 20px;
+      z-index: 12;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav button,
+    .fullscreen {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 50%;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 900;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .nav button:hover,
+    .fullscreen:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .fullscreen {
+      position: absolute;
+      right: 88px;
+      bottom: 18px;
+      z-index: 12;
+      font-size: 15px;
+    }
+
+    .dots {
+      position: absolute;
+      left: 50%;
+      bottom: 25px;
+      z-index: 12;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: width 180ms ease, background 180ms ease;
+    }
+
+    .dot.active {
+      width: 28px;
+      background: var(--gold);
+    }
+
+    .xl-only {
+      display: none;
+    }
+
+    .cover-proof {
+      position: absolute;
+      left: 124px;
+      right: 122px;
+      bottom: 72px;
+      z-index: 4;
+      gap: 18px;
+    }
+
+    .proof-pill,
+    .insight-card,
+    .outcome-card,
+    .flow-chip,
+    .signal-card,
+    .result-note,
+    .advantage-pill,
+    .action-card,
+    .closing-card {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.11);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--soft);
+    }
+
+    .proof-pill {
+      flex: 1;
+      padding: 18px 20px;
+      border-radius: 22px;
+    }
+
+    .proof-pill b,
+    .insight-card b,
+    .outcome-card b,
+    .signal-card b,
+    .result-note b,
+    .advantage-pill b,
+    .action-card b,
+    .closing-card b {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .proof-pill span,
+    .insight-card span,
+    .outcome-card span,
+    .signal-card span,
+    .result-note span,
+    .advantage-pill span,
+    .action-card span,
+    .closing-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 650;
+    }
+
+    .insight-grid,
+    .role-outcome,
+    .solution-ribbon,
+    .screen-flow,
+    .scenario-proof,
+    .chain-signal,
+    .result-notes,
+    .advantage-footer,
+    .road-actions,
+    .closing-grid {
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .insight-card,
+    .outcome-card,
+    .signal-card,
+    .result-note,
+    .advantage-pill,
+    .action-card,
+    .closing-card {
+      min-width: 0;
+      padding: 16px 18px;
+      border-radius: 20px;
+    }
+
+    .solution-ribbon,
+    .screen-flow {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ribbon-step,
+    .flow-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(140, 224, 200, 0.28);
+      background: rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .ribbon-step i,
+    .flow-chip i {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mint);
+      color: #052025;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .highlight-metrics {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      bottom: 30px;
+      gap: 14px;
+    }
+
+    .highlight-metric {
+      flex: 1;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(5, 25, 31, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+    }
+
+    .highlight-metric strong {
+      display: block;
+      color: #ffe4a7;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .highlight-metric span {
+      display: block;
+      margin-top: 7px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 12.5px;
+      line-height: 1.28;
+      font-weight: 700;
+    }
+
+    @media (min-width: 1700px) and (min-height: 900px) {
+      .slide {
+        padding: 76px 100px 76px;
+      }
+
+      .brand {
+        top: 42px;
+        left: 68px;
+        transform: scale(1.08);
+        transform-origin: left top;
+      }
+
+      .ynu-logo {
+        top: 38px;
+        right: 70px;
+        width: 250px;
+        height: 76px;
+      }
+
+      .content {
+        padding-top: 84px;
+      }
+
+      .kicker {
+        min-height: 38px;
+        padding: 9px 16px;
+        font-size: 17px;
+      }
+
+      .slide-title {
+        max-width: 1320px;
+        margin-top: 20px;
+        font-size: 68px;
+      }
+
+      .slide-subtitle {
+        max-width: 1220px;
+        margin-top: 18px;
+        font-size: 26px;
+      }
+
+      .cover .ynu-logo {
+        width: 310px;
+        height: 96px;
+      }
+
+      .cover-content {
+        left: 124px;
+        top: 228px;
+        width: 1080px;
+      }
+
+      .cover h1 {
+        font-size: 108px;
+      }
+
+      .cover .tagline {
+        max-width: 980px;
+        font-size: 38px;
+      }
+
+      .cover-meta {
+        margin-top: 50px;
+        gap: 16px;
+      }
+
+      .member-line {
+        margin-top: 24px;
+        padding: 16px 24px;
+        font-size: 22px;
+      }
+
+      .meta-pill {
+        padding: 15px 22px;
+        font-size: 20px;
+      }
+
+      .hero-device {
+        right: 124px;
+        bottom: 146px;
+        width: 610px;
+        height: 690px;
+        padding: 24px;
+        border-radius: 42px;
+      }
+
+      .cover-proof.xl-only,
+      .highlight-metrics.xl-only {
+        display: flex;
+      }
+
+      .insight-grid.xl-only,
+      .role-outcome.xl-only,
+      .scenario-proof.xl-only,
+      .chain-signal.xl-only,
+      .result-notes.xl-only,
+      .advantage-footer.xl-only,
+      .road-actions.xl-only,
+      .closing-grid.xl-only {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .solution-ribbon.xl-only,
+      .screen-flow.xl-only {
+        display: flex;
+      }
+
+      .proof-pill {
+        padding: 24px 26px;
+        border-radius: 28px;
+      }
+
+      .proof-pill b,
+      .insight-card b,
+      .outcome-card b,
+      .signal-card b,
+      .result-note b,
+      .advantage-pill b,
+      .action-card b,
+      .closing-card b {
+        font-size: 24px;
+      }
+
+      .proof-pill span,
+      .insight-card span,
+      .outcome-card span,
+      .signal-card span,
+      .result-note span,
+      .advantage-pill span,
+      .action-card span,
+      .closing-card span {
+        font-size: 17px;
+      }
+
+      .pain-layout {
+        height: 600px;
+        gap: 32px;
+        margin-top: 34px;
+      }
+
+      .photo-label {
+        left: 30px;
+        right: 30px;
+        bottom: 30px;
+        padding: 26px;
+        font-size: 30px;
+      }
+
+      .pain-list {
+        gap: 20px;
+      }
+
+      .pain-item {
+        grid-template-columns: 78px 1fr;
+        gap: 22px;
+        padding: 26px;
+        border-radius: 30px;
+      }
+
+      .pain-num {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+      }
+
+      .pain-item b {
+        font-size: 30px;
+      }
+
+      .pain-item span {
+        font-size: 20px;
+      }
+
+      .role-map {
+        margin-top: 38px;
+        gap: 26px;
+      }
+
+      .role-card {
+        min-height: 420px;
+        padding: 34px 30px;
+        border-radius: 32px;
+      }
+
+      .role-letter {
+        width: 76px;
+        height: 76px;
+        margin-bottom: 28px;
+        font-size: 34px;
+      }
+
+      .card h3 {
+        font-size: 32px;
+      }
+
+      .card p {
+        font-size: 20px;
+      }
+
+      .role-outcome {
+        margin-top: 24px;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      }
+
+      .solution-map {
+        height: 590px;
+        gap: 34px;
+        margin-top: 36px;
+      }
+
+      .solution-core {
+        width: 510px;
+        height: 510px;
+      }
+
+      .solution-core b {
+        font-size: 48px;
+      }
+
+      .solution-core p {
+        font-size: 23px;
+      }
+
+      .stack-col {
+        gap: 24px;
+      }
+
+      .stack-item {
+        padding: 28px 30px;
+        border-radius: 28px;
+      }
+
+      .stack-item b {
+        font-size: 28px;
+      }
+
+      .stack-item span {
+        font-size: 19px;
+      }
+
+      .solution-ribbon,
+      .screen-flow {
+        margin-top: 24px;
+        gap: 16px;
+      }
+
+      .ribbon-step,
+      .flow-chip {
+        min-height: 58px;
+        padding: 15px 22px;
+        font-size: 19px;
+      }
+
+      .ribbon-step i,
+      .flow-chip i {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+      }
+
+      .highlight-board {
+        height: 600px;
+        gap: 30px;
+        margin-top: 36px;
+      }
+
+      .highlight-main {
+        padding: 44px;
+        border-radius: 38px;
+      }
+
+      .highlight-main h3 {
+        max-width: 760px;
+        font-size: 56px;
+      }
+
+      .highlight-main p {
+        max-width: 720px;
+        font-size: 26px;
+      }
+
+      .highlight-list {
+        gap: 18px;
+      }
+
+      .mini-feature {
+        grid-template-columns: 62px 1fr;
+        gap: 20px;
+        padding: 24px;
+        border-radius: 28px;
+      }
+
+      .mini-feature i {
+        width: 62px;
+        height: 62px;
+        font-size: 18px;
+      }
+
+      .mini-feature b {
+        font-size: 25px;
+      }
+
+      .mini-feature span {
+        font-size: 18px;
+      }
+
+      .highlight-metric strong {
+        font-size: 42px;
+      }
+
+      .highlight-metric span {
+        font-size: 16px;
+      }
+
+      .screens {
+        gap: 24px;
+        margin-top: 34px;
+      }
+
+      .screen-card {
+        border-radius: 30px;
+      }
+
+      .screen-card img {
+        height: 220px;
+      }
+
+      .screen-card div {
+        padding: 22px 24px 24px;
+      }
+
+      .screen-card b {
+        font-size: 25px;
+      }
+
+      .screen-card p {
+        font-size: 17px;
+      }
+
+      .scene-strip {
+        height: 610px;
+        gap: 28px;
+        margin-top: 36px;
+      }
+
+      .scene {
+        border-radius: 38px;
+      }
+
+      .scene-content {
+        left: 34px;
+        right: 34px;
+        bottom: 34px;
+      }
+
+      .scene-label {
+        font-size: 17px;
+      }
+
+      .scene h3 {
+        font-size: 38px;
+      }
+
+      .scene p {
+        font-size: 20px;
+      }
+
+      .chain {
+        height: 610px;
+        grid-template-rows: 1fr 150px;
+        gap: 22px;
+        margin-top: 34px;
+      }
+
+      .chain-main {
+        gap: 16px;
+      }
+
+      .flow-lane {
+        gap: 18px;
+        padding: 24px;
+        border-radius: 34px;
+      }
+
+      .flow-lane::after {
+        right: -24px;
+        width: 40px;
+        height: 40px;
+        border-top-width: 4px;
+        border-right-width: 4px;
+      }
+
+      .lane-label {
+        padding: 10px 15px;
+        font-size: 17px;
+      }
+
+      .flow-nodes {
+        gap: 18px;
+      }
+
+      .chain-node {
+        padding: 24px 20px;
+        border-radius: 30px;
+      }
+
+      .chain-node i {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 22px;
+        font-size: 19px;
+      }
+
+      .chain-node b {
+        font-size: 25px;
+      }
+
+      .chain-node p {
+        font-size: 17px;
+      }
+
+      .base-card {
+        padding: 24px;
+        border-radius: 28px;
+      }
+
+      .base-card b {
+        font-size: 22px;
+      }
+
+      .base-card span {
+        font-size: 16px;
+      }
+
+      .result-layout {
+        height: 600px;
+        gap: 30px;
+        margin-top: 34px;
+      }
+
+      .metric-wall {
+        gap: 18px;
+      }
+
+      .metric {
+        padding: 28px;
+        border-radius: 30px;
+      }
+
+      .metric strong {
+        font-size: 66px;
+      }
+
+      .metric span {
+        font-size: 20px;
+      }
+
+      .compare {
+        height: 580px;
+        gap: 30px;
+        margin-top: 36px;
+      }
+
+      .compare-card {
+        padding: 38px;
+        border-radius: 38px;
+      }
+
+      .compare-card h3 {
+        font-size: 40px;
+      }
+
+      .check-row {
+        grid-template-columns: 42px 1fr;
+        gap: 16px;
+        margin-top: 20px;
+        font-size: 23px;
+      }
+
+      .check-row i {
+        width: 36px;
+        height: 36px;
+      }
+
+      .roadmap {
+        height: 520px;
+        gap: 28px;
+        margin-top: 40px;
+      }
+
+      .road-card {
+        padding: 42px 36px;
+        border-radius: 38px;
+      }
+
+      .road-card::before {
+        font-size: 112px;
+      }
+
+      .road-card h3 {
+        font-size: 38px;
+      }
+
+      .road-card p {
+        font-size: 22px;
+      }
+
+      .closing h2 {
+        font-size: 96px;
+      }
+
+      .closing p {
+        max-width: 1080px;
+        font-size: 34px;
+      }
+
+      .closing-grid {
+        width: min(1260px, 78vw);
+        margin: 56px auto 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow: auto;
+        display: block;
+        background: #071f25;
+      }
+
+      .deck {
+        width: 100vw;
+        height: auto;
+        min-height: 100vh;
+        aspect-ratio: auto;
+      }
+
+      .slide,
+      .slide.active {
+        position: relative;
+        display: block;
+        min-height: 100vh;
+        padding: 78px 22px 88px;
+      }
+
+      .slide:not(.active) {
+        display: none;
+      }
+
+      .ynu-logo {
+        width: 158px;
+        height: 54px;
+        right: 20px;
+        top: 18px;
+      }
+
+      .brand {
+        left: 20px;
+        top: 22px;
+      }
+
+      .slide-title,
+      .cover h1,
+      .closing h2 {
+        font-size: 40px;
+      }
+
+      .cover-content,
+      .closing-center {
+        position: relative;
+        inset: auto;
+        width: auto;
+        padding: 110px 22px 80px;
+      }
+
+      .hero-device {
+        display: none;
+      }
+
+      .content {
+        height: auto;
+      }
+
+      .grid.two,
+      .grid.three,
+      .grid.four,
+      .pain-layout,
+      .role-map,
+      .solution-map,
+      .highlight-board,
+      .screens,
+      .scene-strip,
+      .chain-main,
+      .chain-base,
+      .result-layout,
+      .metric-wall,
+      .compare,
+      .roadmap {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .solution-core {
+        width: 280px;
+        height: 280px;
+      }
+
+      .chain {
+        height: auto;
+      }
+
+      .chain-main::before,
+      .flow-lane::after {
+        display: none;
+      }
+
+      .member-line,
+      .advantage-footer {
+        display: grid;
+        grid-template-columns: 1fr;
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="语界 LinguaSpace 项目评审展示">
+    <section class="slide cover active">
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="cover-content">
+        <div class="kicker">项目评审展示</div>
+        <h1>语界 LinguaSpace</h1>
+        <p class="tagline">让云南文旅服务听得懂、讲得准、接得住</p>
+        <div class="cover-meta">
+          <span class="meta-pill">云南文旅多语 AI 导览平台</span>
+          <span class="meta-pill">游客服务 · 导游协同 · 导游实训</span>
+          <span class="meta-pill">项目组 / 2026</span>
+        </div>
+        <div class="member-line"><b>项目成员</b>邱靖翔、陈荣坤、陈昊阳、姜凡、曲冠衡</div>
+      </div>
+      <div class="hero-device">
+        <img src="docs/文档/figures/screenshots/tourist-chat.png" alt="游客多语聊天界面" />
+      </div>
+      <div class="cover-proof xl-only">
+        <div class="proof-pill"><b>面向真实文旅现场</b><span>围绕游客问询、导游服务、课堂实训和知识维护组织完整体验。</span></div>
+        <div class="proof-pill"><b>云南文化语境优先</b><span>突出景点、民族文化、非遗、礼仪和路线等地方性内容表达。</span></div>
+        <div class="proof-pill"><b>可演示、可扩展、可沉淀</b><span>从界面效果到服务链路形成闭环，便于答辩展示和后续落地。</span></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">01 背景与痛点</div>
+        <h2 class="slide-title">云南文旅正在面对更复杂的服务现场</h2>
+        <p class="slide-subtitle">游客来源更广、咨询更即时、文化讲解要求更准确，传统人工服务很难同时覆盖语言、知识和响应效率。</p>
+        <div class="pain-layout">
+          <div class="photo-panel">
+            <img src="frontend/public/assets/intro-scenario-multilingual-visitors.png" alt="多语游客场景" />
+            <div class="photo-label">跨语言、跨文化、跨场景的文旅服务，需要新的智能化支撑。</div>
+          </div>
+          <div class="pain-list">
+            <div class="pain-item"><div class="pain-num">1</div><div><b>语言沟通不稳定</b><span>外籍游客在问路、讲解、菜单、标识牌等场景中需要即时帮助。</span></div></div>
+            <div class="pain-item"><div class="pain-num">2</div><div><b>文化讲解不能随意生成</b><span>民族文化、宗教礼仪、非遗知识需要可信依据和审核机制。</span></div></div>
+            <div class="pain-item"><div class="pain-num">3</div><div><b>真人导游精力有限</b><span>高频基础问题可由 AI 处理，复杂问题仍需要人工接管。</span></div></div>
+            <div class="pain-item"><div class="pain-num">4</div><div><b>导游培养缺少即时反馈</b><span>学生讲解训练需要可重复、可量化、可复盘的实训环境。</span></div></div>
+          </div>
+        </div>
+        <div class="insight-grid xl-only">
+          <div class="insight-card"><b>服务现场更碎片</b><span>问题来自路线、历史、礼仪、饮食、购物、应急等多个场景，要求平台快速理解意图。</span></div>
+          <div class="insight-card"><b>文化表达更敏感</b><span>地方文化讲解需要尊重事实、语境和禁忌，不能只追求“回答得快”。</span></div>
+          <div class="insight-card"><b>人才培养更需要反馈</b><span>导游学生需要在接近真实游客的问题中练习，并获得可复盘的改进方向。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">02 项目目标</div>
+        <h2 class="slide-title">建设一个连接游客、导游、学员与知识管理的文旅智能平台</h2>
+        <p class="slide-subtitle">项目不是单点工具，而是围绕“服务、协同、训练、治理”构建闭环能力。</p>
+        <div class="role-map">
+          <article class="card role-card"><div class="role-letter">游</div><h3>服务游客</h3><p>提供文字、语音、图片等多模态问答，让游客在景区现场快速获得可信导览。</p></article>
+          <article class="card role-card"><div class="role-letter">导</div><h3>辅助导游</h3><p>让导游查看会话、接管复杂问题，并把优质讲解经验沉淀回来。</p></article>
+          <article class="card role-card"><div class="role-letter">训</div><h3>训练学员</h3><p>用虚拟游客和场景化问题支持导游讲解实训，形成评分和改进建议。</p></article>
+          <article class="card role-card"><div class="role-letter">治</div><h3>治理知识</h3><p>把文旅资料、术语、文化关系和审核流程纳入统一管理，支撑持续迭代。</p></article>
+        </div>
+        <div class="role-outcome xl-only">
+          <div class="outcome-card"><b>游客获得即时帮助</b><span>降低跨语言沟通成本，提升景区游览的安全感和理解度。</span></div>
+          <div class="outcome-card"><b>导游释放基础压力</b><span>把重复问题交给智能服务，把精力留给深度讲解和复杂服务。</span></div>
+          <div class="outcome-card"><b>学员获得真实训练</b><span>用模拟游客和场景任务提升表达能力、应变能力和文化准确性。</span></div>
+          <div class="outcome-card"><b>管理者沉淀知识资产</b><span>把游客反馈、导游经验和审核内容转化为可持续更新的资料库。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">03 方案概览</div>
+        <h2 class="slide-title">用 AI 做高频服务，用真人守住复杂场景，用知识库保证可信</h2>
+        <p class="slide-subtitle">平台把多语交互、文化知识、导游协同和实训反馈组合成一套可持续增长的文旅服务系统。</p>
+        <div class="solution-map">
+          <div class="stack-col">
+            <div class="stack-item"><b>游客端</b><span>多语聊天、语音问答、拍照识别、路线推荐。</span></div>
+            <div class="stack-item"><b>导游端</b><span>会话查看、人工接管、回答修正、案例沉淀。</span></div>
+          </div>
+          <div class="solution-core">
+            <div><b>文旅智能服务闭环</b><p>AI 导览、真人协同、知识治理、导游实训互相连接。</p></div>
+          </div>
+          <div class="stack-col">
+            <div class="stack-item"><b>学员端</b><span>虚拟游客、场景训练、语音讲解、评分报告。</span></div>
+            <div class="stack-item"><b>知识端</b><span>文档资料、文化图谱、术语维护、内容审核。</span></div>
+          </div>
+        </div>
+        <div class="solution-ribbon xl-only">
+          <div class="ribbon-step"><i>1</i>现场问题进入平台</div>
+          <div class="ribbon-step"><i>2</i>知识增强保证准确</div>
+          <div class="ribbon-step"><i>3</i>人工导游兜底协同</div>
+          <div class="ribbon-step"><i>4</i>经验反馈持续沉淀</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">04 核心亮点</div>
+        <h2 class="slide-title">最能打动评委的不是“会回答”，而是“能可信服务并持续成长”</h2>
+        <div class="highlight-board">
+          <div class="highlight-main">
+            <h3>可信文旅知识增强</h3>
+            <p>文化类问题先对接知识库和文化关系，再生成讲解；导游修正和审核结果可以继续回流，让系统越用越准。</p>
+            <div class="highlight-metrics xl-only">
+              <div class="highlight-metric"><strong>可信</strong><span>文化内容先查证再表达</span></div>
+              <div class="highlight-metric"><strong>协同</strong><span>AI 与真人导游分层服务</span></div>
+              <div class="highlight-metric"><strong>成长</strong><span>反馈与审核持续回流</span></div>
+            </div>
+          </div>
+          <div class="highlight-list">
+            <div class="mini-feature"><i>01</i><div><b>多语多模态服务</b><span>文字、语音、图片多入口，贴近真实景区咨询场景。</span></div></div>
+            <div class="mini-feature"><i>02</i><div><b>AI + 真人导游协同</b><span>基础问题快速响应，复杂问题由真人接管兜底。</span></div></div>
+            <div class="mini-feature"><i>03</i><div><b>导游人才实训</b><span>把“游客提问、学生讲解、系统评分”变成可复盘训练。</span></div></div>
+            <div class="mini-feature"><i>04</i><div><b>文化知识可治理</b><span>资料、术语、图谱和审核任务统一管理，避免碎片化维护。</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">05 功能展示</div>
+        <h2 class="slide-title">围绕真实文旅服务链路形成多端页面体系</h2>
+        <p class="slide-subtitle">页面不是孤立功能堆叠，而是围绕游客咨询、导游协同、知识管理与实训反馈形成工作流。</p>
+        <div class="screens">
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/tourist-chat.png" alt="游客多语聊天" /><div><b>游客多语聊天</b><p>语言切换、历史会话、来源提示和人工导游入口集中呈现。</p></div></article>
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/tourist-image.png" alt="图片识别问答" /><div><b>拍照识别问答</b><p>面向建筑、菜单、标识牌、文旅物件等现场问题。</p></div></article>
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/guide-dashboard.png" alt="导游工作台" /><div><b>导游协同工作台</b><p>查看游客会话、接管复杂问题、提交讲解修正。</p></div></article>
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/student-training.png" alt="导游实训" /><div><b>AI 导游实训</b><p>虚拟游客提问、学生语音回答、生成多维训练反馈。</p></div></article>
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/knowledge-graph.png" alt="文化知识图谱" /><div><b>文化知识图谱</b><p>用关系网络补充景点、民族、节庆和非遗之间的联系。</p></div></article>
+          <article class="screen-card"><img src="docs/文档/figures/screenshots/system-health.png" alt="系统健康监控" /><div><b>系统运行观测</b><p>帮助管理者掌握关键服务状态和平台运行情况。</p></div></article>
+        </div>
+        <div class="screen-flow xl-only">
+          <div class="flow-chip"><i>A</i>游客端提出问题</div>
+          <div class="flow-chip"><i>B</i>导游端接管修正</div>
+          <div class="flow-chip"><i>C</i>知识端审核沉淀</div>
+          <div class="flow-chip"><i>D</i>学员端复盘训练</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">06 使用场景</div>
+        <h2 class="slide-title">项目可以落在景区服务、校园实训和文旅治理三类真实场景</h2>
+        <div class="scene-strip">
+          <article class="scene"><img src="frontend/public/assets/public-tour-guide-group.jpg" alt="景区服务" /><div class="scene-content"><span class="scene-label">景区与游客中心</span><h3>多语即时导览</h3><p>为外籍游客提供问答、拍照识别、路线推荐和礼仪提示，减轻人工咨询压力。</p></div></article>
+          <article class="scene"><img src="frontend/public/assets/public-classroom-student.jpg" alt="高校实训" /><div class="scene-content"><span class="scene-label">高校导游课程</span><h3>虚拟带团训练</h3><p>用模拟游客和真实文化问题训练学生讲解能力，并输出可复盘的训练反馈。</p></div></article>
+          <article class="scene"><img src="frontend/public/assets/intro-scenario-knowledge-growth.png" alt="知识治理" /><div class="scene-content"><span class="scene-label">文旅知识管理</span><h3>优质内容沉淀</h3><p>把导游经验、审核资料、游客反馈沉淀为持续更新的地方文化知识资产。</p></div></article>
+        </div>
+        <div class="scenario-proof xl-only">
+          <div class="insight-card"><b>景区服务价值</b><span>提升咨询响应效率，缓解多语服务压力，让游客更容易理解云南文化。</span></div>
+          <div class="insight-card"><b>教学实训价值</b><span>把真实问答迁移到课堂训练，形成可记录、可评分、可复盘的训练过程。</span></div>
+          <div class="insight-card"><b>区域治理价值</b><span>沉淀高质量文化内容，为更多景区、课程和文旅活动提供统一知识底座。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">07 完整系统链路</div>
+        <h2 class="slide-title">从游客问题到可信回答，再到人工修正与知识回流</h2>
+        <div class="chain">
+          <div class="chain-main">
+            <div class="flow-lane">
+              <span class="lane-label">输入层</span>
+              <div class="flow-nodes">
+                <div class="chain-node"><i>01</i><b>现场输入</b><p>游客文字、语音、图片提问，学员提交讲解回答。</p></div>
+              </div>
+            </div>
+            <div class="flow-lane">
+              <span class="lane-label">理解与查证</span>
+              <div class="flow-nodes">
+                <div class="chain-node"><i>02</i><b>内容理解</b><p>识别语言、语音文本、图片线索和游客意图。</p></div>
+                <div class="chain-node"><i>03</i><b>知识查证</b><p>检索文旅知识库，补充文化图谱关系。</p></div>
+              </div>
+            </div>
+            <div class="flow-lane">
+              <span class="lane-label">生成与交付</span>
+              <div class="flow-nodes">
+                <div class="chain-node"><i>04</i><b>智能生成</b><p>组织成适合游客理解的讲解、建议或评分反馈。</p></div>
+                <div class="chain-node"><i>05</i><b>服务交付</b><p>返回多语文本、语音播报、导游接管或训练报告。</p></div>
+              </div>
+            </div>
+            <div class="flow-lane">
+              <span class="lane-label">协同回流</span>
+              <div class="flow-nodes">
+                <div class="chain-node"><i>06</i><b>反馈回流</b><p>导游修正、用户反馈和审核结果反向更新知识体系。</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="chain-base">
+            <div class="base-card"><b>知识资产</b><span>景点、民族文化、非遗、路线、礼仪与常见问题。</span></div>
+            <div class="base-card"><b>模型能力</b><span>文本理解、视觉识别、语音转写和语音合成协同工作。</span></div>
+            <div class="base-card"><b>人工协同</b><span>导游接管复杂问题，专家审核沉淀内容。</span></div>
+            <div class="base-card"><b>运行观测</b><span>记录请求链路、服务状态和反馈质量，支撑持续优化。</span></div>
+          </div>
+        </div>
+        <div class="chain-signal xl-only">
+          <div class="signal-card"><b>前台体验</b><span>游客看到的是自然问答、语音播报、拍照识别和人工入口。</span></div>
+          <div class="signal-card"><b>中台协同</b><span>导游、学员与管理者围绕同一批会话和知识进行处理。</span></div>
+          <div class="signal-card"><b>后台沉淀</b><span>反馈、审核、训练结果继续更新知识资产，形成可增长系统。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">08 成果展示</div>
+        <h2 class="slide-title">当前成果已经覆盖“可看、可用、可演示”的核心闭环</h2>
+        <div class="result-layout">
+          <div class="metric-wall">
+            <div class="metric"><strong>6</strong><span>类应用入口：项目介绍、游客、导游、学员、知识、系统。</span></div>
+            <div class="metric"><strong>3</strong><span>类游客交互：文字、语音、图片问答。</span></div>
+            <div class="metric"><strong>4</strong><span>类核心角色：游客、导游、学员、管理者。</span></div>
+            <div class="metric"><strong>20+</strong><span>个页面效果已形成可评审展示的系统界面。</span></div>
+          </div>
+          <div class="montage">
+            <img src="docs/文档/figures/screenshots/tourist-home.png" alt="游客首页" />
+            <img src="docs/文档/figures/screenshots/guide-sessions.png" alt="导游会话" />
+            <img src="docs/文档/figures/screenshots/knowledge-documents.png" alt="知识文档" />
+          </div>
+        </div>
+        <div class="result-notes xl-only">
+          <div class="result-note"><b>展示完整度</b><span>项目已经形成可进入、可切换、可讲解的多页面展示路径。</span></div>
+          <div class="result-note"><b>业务闭环度</b><span>从游客咨询到导游协同、知识审核、训练反馈形成连续叙事。</span></div>
+          <div class="result-note"><b>评审可理解度</b><span>通过真实页面与场景图示，让评委快速看到项目价值和落点。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">09 项目优势</div>
+        <h2 class="slide-title">相比普通导览工具，语界更强调可信、协同和可持续建设</h2>
+        <p class="slide-subtitle">它的优势不是多一个问答入口，而是把服务效率、文化可信、人才培养和知识资产放进同一套闭环。</p>
+        <div class="compare">
+          <div class="compare-card">
+            <h3>普通方案的局限</h3>
+            <div class="check-row"><i>!</i><span>偏单点问答，难以覆盖导游协同和实训场景。</span></div>
+            <div class="check-row"><i>!</i><span>文化类回答缺少知识来源，容易出现不准确讲解。</span></div>
+            <div class="check-row"><i>!</i><span>游客反馈和导游经验难以沉淀为长期资产。</span></div>
+            <div class="check-row"><i>!</i><span>系统价值停留在展示层，缺少管理和治理闭环。</span></div>
+          </div>
+          <div class="compare-card good">
+            <h3>语界的创新价值</h3>
+            <div class="check-row"><i>✓</i><span>面向游客、导游、学员和管理者形成多角色联动。</span></div>
+            <div class="check-row"><i>✓</i><span>用文旅知识库和文化图谱提升回答可信度。</span></div>
+            <div class="check-row"><i>✓</i><span>把导游修正、审核结果和训练数据纳入持续增长闭环。</span></div>
+            <div class="check-row"><i>✓</i><span>兼具景区服务、教学实训和文旅知识治理推广空间。</span></div>
+          </div>
+        </div>
+        <div class="advantage-footer">
+          <div class="advantage-pill"><b>展示更直观</b><span>用游客端、导游端、学员端和知识端串起完整故事，评委能快速看到系统效果。</span></div>
+          <div class="advantage-pill"><b>应用更贴近真实</b><span>覆盖景区问询、人工接管、课堂实训、文化资料维护等高频文旅场景。</span></div>
+          <div class="advantage-pill"><b>价值更能沉淀</b><span>把游客反馈、导游经验和审核资料转化为可持续增长的地方文化知识资产。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="brand"><div class="brand-mark">语</div><div>LinguaSpace<span>Project Roadshow</span></div></div>
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="content">
+        <div class="kicker">10 未来展望</div>
+        <h2 class="slide-title">从课程项目走向示范应用，逐步形成云南文旅智能服务样板</h2>
+        <div class="roadmap">
+          <article class="road-card" data-step="1"><h3>完善示范场景</h3><p>围绕典型景区、民族文化和路线推荐补充高质量知识内容，强化现场问答体验。</p></article>
+          <article class="road-card" data-step="2"><h3>拓展实训体系</h3><p>面向高校导游课程建设多类型训练任务，沉淀优秀讲解案例和常见问题库。</p></article>
+          <article class="road-card" data-step="3"><h3>推动区域推广</h3><p>面向景区、游客中心和文旅管理部门，形成可复制的多语服务与知识治理模式。</p></article>
+        </div>
+        <div class="road-actions xl-only">
+          <div class="action-card"><b>近期重点</b><span>补充典型景点知识、完善演示脚本、优化移动端展示流程。</span></div>
+          <div class="action-card"><b>中期重点</b><span>接入更多训练任务和评价维度，增强课堂实训的可复盘性。</span></div>
+          <div class="action-card"><b>长期重点</b><span>形成可复制的区域文旅智能服务模板，支撑更多场景落地。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide closing">
+      <img class="ynu-logo" src="project_presentation_assets/ynu_logo.png" alt="云南大学" />
+      <div class="closing-center">
+        <div>
+          <div class="kicker">THANK YOU</div>
+          <h2>让文化被准确理解，让服务被及时响应</h2>
+          <p>语界 LinguaSpace 以云南文旅为起点，探索可信、多语、可协同、可成长的智能导览新范式。</p>
+          <div class="closing-grid xl-only">
+            <div class="closing-card"><b>看见问题</b><span>多语沟通、文化准确、人工压力和实训反馈共同构成真实需求。</span></div>
+            <div class="closing-card"><b>形成方案</b><span>AI 服务、真人协同、知识治理和实训反馈组成完整闭环。</span></div>
+            <div class="closing-card"><b>面向落地</b><span>从课程项目出发，具备景区服务、教学训练和区域推广空间。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav" aria-label="翻页按钮">
+      <button type="button" class="prev" aria-label="上一页">‹</button>
+      <button type="button" class="next" aria-label="下一页">›</button>
+    </div>
+    <button type="button" class="fullscreen" aria-label="全屏">⛶</button>
+    <div class="dots" id="dots" aria-label="页面导航"></div>
+    <div class="pager" id="pager">1 / 12</div>
+    <div class="progress"><div class="progress-bar" id="progress"></div></div>
+  </main>
+
+  <script>
+    const deck = document.querySelector(".deck");
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const pager = document.getElementById("pager");
+    const progress = document.getElementById("progress");
+    const dots = document.getElementById("dots");
+    let current = 0;
+    let wheelLocked = false;
+
+    slides.forEach((_, index) => {
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.type = "button";
+      dot.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+      dot.addEventListener("click", () => show(index));
+      dots.appendChild(dot);
+    });
+
+    const dotItems = Array.from(document.querySelectorAll(".dot"));
+
+    function show(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === current);
+      });
+      dotItems.forEach((dot, dotIndex) => {
+        dot.classList.toggle("active", dotIndex === current);
+      });
+      pager.textContent = `${current + 1} / ${slides.length}`;
+      progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+      history.replaceState(null, "", `#${current + 1}`);
+    }
+
+    function next() {
+      show(current + 1);
+    }
+
+    function prev() {
+      show(current - 1);
+    }
+
+    document.querySelector(".next").addEventListener("click", next);
+    document.querySelector(".prev").addEventListener("click", prev);
+    document.querySelector(".fullscreen").addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        deck.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
+        event.preventDefault();
+        next();
+      }
+      if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(event.key)) {
+        event.preventDefault();
+        prev();
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        show(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        show(slides.length - 1);
+      }
+      if (event.key.toLowerCase() === "f") {
+        document.querySelector(".fullscreen").click();
+      }
+    });
+
+    window.addEventListener("wheel", (event) => {
+      if (Math.abs(event.deltaY) < 18 || wheelLocked) return;
+      wheelLocked = true;
+      event.deltaY > 0 ? next() : prev();
+      window.setTimeout(() => {
+        wheelLocked = false;
+      }, 520);
+    }, { passive: true });
+
+    let touchStartX = null;
+    let touchStartY = null;
+    document.addEventListener("touchstart", (event) => {
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener("touchend", (event) => {
+      if (touchStartX === null || touchStartY === null) return;
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) > 46) {
+        Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? next() : prev()) : (dy < 0 ? next() : prev());
+      }
+      touchStartX = null;
+      touchStartY = null;
+    }, { passive: true });
+
+    const hashIndex = Number.parseInt(location.hash.replace("#", ""), 10);
+    show(Number.isNaN(hashIndex) ? 0 : hashIndex - 1);
+  </script>
+</body>
+</html>

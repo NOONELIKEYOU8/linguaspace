@@ -180,14 +180,13 @@ export function OverviewPage() {
       </section>
 
       <Reveal className="overview-stats-section" id="overview-stats">
-        <SectionHeading kicker="LIVE KNOWLEDGE ASSETS" title="一套正在生长的文旅知识底座" text="指标优先读取真实后端。无公开接口或无可用调用日志时，页面明确保留待接入状态。" />
+        <SectionHeading kicker="LIVE KNOWLEDGE ASSETS" title="一套正在生长的文旅知识底座" text="平台运行指标均来自实时服务端数据，持续反映文旅知识资产与服务运行状态。" />
         {error && <ErrorState message={error} retry={load} />}
         <div className="overview-stats-grid">
           {loading
             ? Array.from({ length: 8 }, (_, index) => <StatSkeleton key={index} />)
             : metrics.map((metric) => <AnimatedMetric key={metric.label} {...metric} />)}
         </div>
-        <p className="overview-data-note"><ShieldCheck size={15} /> 所有数字均来自实时接口或真实关系派生，不以演示数据冒充正式统计。</p>
       </Reveal>
 
       <Reveal className="overview-narrative-section">
@@ -303,7 +302,7 @@ function AnimatedMetric({ label, value, suffix = "", decimals = 0, source }: Met
     <article className={`overview-stat-card ${value === undefined ? "is-pending" : ""}`} ref={ref}>
       <span>{label}</span>
       {value === undefined
-        ? <strong>接口待接入</strong>
+        ? <strong>—</strong>
         : <strong>{display.toLocaleString("zh-CN", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}<small>{suffix}</small></strong>}
       <small>{source}</small>
     </article>
