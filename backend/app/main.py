@@ -1,3 +1,18 @@
+"""
+LinguaSpace FastAPI 主应用模块。
+
+本模块定义了所有 API 路由和请求/响应模型，提供：
+- 智能问答接口（chat）
+- 知识库管理接口（knowledge CRUD）
+- 知识图谱接口（graph CRUD）
+- 导游实训接口（training, scoring）
+- 导游协同接口（collaboration）
+- 多语言翻译接口（translation）
+- 用户认证接口（login）
+- 系统管理接口（settings, roles）
+
+所有接口都通过 require_roles 依赖进行权限控制。
+"""
 from __future__ import annotations
 
 import json
@@ -26,8 +41,13 @@ from .scoring import score_training
 from .store import store
 from .translation import apply_glossary_to_zh, list_terms, translate
 
+# 创建 FastAPI 应用实例
 app = FastAPI(title=settings.app_name, version="1.0.0")
+# 配置 CORS 中间件，允许所有来源访问
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+
+# ========== Pydantic 请求模型定义 ==========
 
 
 class ChatRequest(BaseModel):
@@ -227,7 +247,11 @@ def require_roles(*roles: str):
     return verify
 
 
+# ========== 辅助函数 ==========
+
+
 def _tcp(host: str, port: int) -> dict[str, Any]:
+    """检查 TCP 端口是否可达。"""
     try:
         with socket.create_connection((host, port), timeout=0.4):
             return {"ok": True, "host": host, "port": port}
@@ -235,6 +259,9 @@ def _tcp(host: str, port: int) -> dict[str, Any]:
         return {"ok": False, "host": host, "port": port, "error": str(exc)}
 
 
+# ========== 游客画像推断 ==========
+
+# 兴趣关键词映射
 INTEREST_KEYWORDS = {
     "民族文化": ("民族", "白族", "彝族", "傣族", "摩梭", "纳西"),
     "美食": ("美食", "小吃", "餐", "吃", "野生菌", "火锅"),
@@ -242,17 +269,31 @@ INTEREST_KEYWORDS = {
     "建筑": ("建筑", "民居", "照壁", "寺庙", "古镇"),
     "非遗": ("非遗", "扎染", "紫陶", "三道茶"),
 }
+# 意图类型关键词映射
 INTENT_KEYWORDS = {
     "知识型": ("是什么", "为什么", "历史", "文化", "介绍"),
     "求助型": ("怎么", "如何", "哪里", "能不能", "是否"),
     "投诉型": ("投诉", "不好", "不满意", "失望"),
     "消费型": ("价格", "票价", "购买", "预约", "消费"),
 }
+# 风险关键词
 RISK_KEYWORDS = ("高反", "投诉", "受伤", "宗教", "禁忌", "边境", "执勤", "隐私", "安全")
+# 动态信息关键词
 DYNAMIC_TERMS = ("开放时间", "票价", "价格", "预约", "政策", "天气")
 
 
 def _infer_profile(question: str) -> dict[str, Any]:
+    """
+    根据问题推断游客画像。
+    
+    分析游客问题，推断其兴趣类型、意图类型、风险等级和游览状态。
+    
+    Args:
+        question: 游客问题
+        
+    Returns:
+        包含兴趣、意图、风险等级、游览状态的画像字典
+    """
     interests = [label for label, terms in INTEREST_KEYWORDS.items() if any(term in question for term in terms)]
     intent_types = [label for label, terms in INTENT_KEYWORDS.items() if any(term in question for term in terms)]
     risk_level = "high" if any(term in question for term in RISK_KEYWORDS) else "normal"
@@ -271,6 +312,7 @@ def _infer_profile(question: str) -> dict[str, Any]:
 
 
 def _dynamic_hint(question: str) -> bool:
+    """检查问题是否涉及动态信息（如开放时间、票价）。"""
     return any(term in question for term in DYNAMIC_TERMS)
 
 
@@ -294,6 +336,7 @@ def _parse_reference_answers(value: str) -> list[str]:
 
 
 def _overview_stats() -> dict[str, Any]:
+    """获取系统概览统计数据。"""
     today = datetime.now().date().isoformat()
     messages = runtime._all("messages", 5000)
     sessions = runtime._all("guide_sessions", 5000)

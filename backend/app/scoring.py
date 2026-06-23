@@ -1,3 +1,13 @@
+"""
+导游实训评分模块。
+
+本模块提供导游实训回答的自动评分功能，包括：
+- 规则守卫评分（guardrail）：检查冒犯、危险建议、安全响应
+- 知识点覆盖率计算
+- LLM-as-Judge 评分：使用 LLM 进行细致评分
+
+评分维度：内容准确度、讲解完整度、服务应对、文化与边界敏感度。
+"""
 from __future__ import annotations
 
 import json
@@ -7,15 +17,32 @@ from typing import Any
 from .config import settings
 from .providers import provider
 
+# 冒犯性词汇列表
 ABUSE = ("受着", "活该", "闭嘴", "滚", "老头", "老太太", "傻", "蠢", "废物", "别烦")
+# 危险建议词汇列表
 DANGEROUS = ("随便拍", "随便吃", "直接吃", "继续爬", "不用管", "不用就医", "翻护栏", "自行采摘")
+# 安全相关词汇列表
 SAFETY = ("高反", "高原反应", "头痛", "胸闷", "呼吸", "缺氧", "晕", "受伤", "急救", "危险")
+# 安全行动词汇列表
 SAFETY_ACTIONS = ("停止", "暂停", "休息", "补水", "保暖", "吸氧", "下撤", "就医", "医院", "120", "求助", "联系")
+# 评分维度名称
 METRICS = ("内容准确度", "讲解完整度", "服务应对", "文化与边界敏感度")
+# 常见无效短语（用于知识点提取过滤）
 STOP_PHRASES = ("我会", "可以", "需要", "建议", "应该", "游客", "导游", "说明", "提醒")
 
 
 def _extract_points(reference_answers: str) -> list[str]:
+    """
+    从参考答案中提取知识点。
+    
+    将参考答案分割成独立的知识点片段。
+    
+    Args:
+        reference_answers: 参考答案文本
+        
+    Returns:
+        知识点列表（去重后）
+    """
     points: list[str] = []
     segments = [part.strip() for part in reference_answers.replace("|", "\n").split("\n") if part.strip()]
     for segment in segments:
@@ -33,6 +60,16 @@ def _extract_points(reference_answers: str) -> list[str]:
 
 
 def _coverage(answer: str, reference_answers: str) -> dict[str, Any]:
+    """
+    计算知识点覆盖率。
+    
+    Args:
+        answer: 学员回答
+        reference_answers: 参考答案
+        
+    Returns:
+        包含覆盖率分数、已覆盖知识点、缺失知识点的字典
+    """
     points = _extract_points(reference_answers)
     if not points:
         return {"score": 0, "covered": [], "missing": [], "total": 0}
@@ -43,6 +80,21 @@ def _coverage(answer: str, reference_answers: str) -> dict[str, Any]:
 
 
 def _guardrail(question: str, answer: str) -> dict[str, Any]:
+    """
+    规则守卫评分。
+    
+    检查回答是否包含：
+    - 冒犯性表达
+    - 危险建议
+    - 对安全问题缺少可执行措施
+    
+    Args:
+        question: 游客问题
+        answer: 学员回答
+        
+    Returns:
+        包含总分、各维度分数、反馈建议的字典
+    """
     text = answer.strip()
     abuse = any(word in text for word in ABUSE)
     dangerous = any(word in text for word in DANGEROUS)
@@ -79,6 +131,23 @@ def _guardrail(question: str, answer: str) -> dict[str, Any]:
 
 
 def score_training(scenario: str, question: str, answer: str, reference_answers: str = "") -> dict[str, Any]:
+    """
+    综合评分函数。
+    
+    结合规则守卫、知识点覆盖率和 LLM-as-Judge 进行评分。
+    
+    Args:
+        scenario: 实训场景
+        question: 游客问题
+        answer: 学员回答
+        reference_answers: 参考答案
+        
+    Returns:
+        包含总分、各维度分数、反馈建议、评分模式的字典
+        
+    Raises:
+        RuntimeError: 如果 LLM 评分失败
+    """
     guardrail = _guardrail(question, answer)
     coverage = _coverage(answer, reference_answers)
     prompt = f"""你是云南文旅导游实训评分员。请严格评价学生回答，不得因为提到关键词就给高分。

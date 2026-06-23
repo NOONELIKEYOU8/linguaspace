@@ -1,3 +1,15 @@
+"""
+运行时数据存储模块。
+
+本模块管理 MySQL 数据库中的运行时数据，包括：
+- 用户管理
+- 导游会话与消息记录
+- 术语库管理
+- 实训记录与评分
+- 反馈与收藏
+
+提供数据库表结构定义（SCHEMA）和 CRUD 操作。
+"""
 from __future__ import annotations
 
 import hashlib
@@ -27,6 +39,8 @@ def _verify_password(password: str, encoded: str) -> bool:
     return hmac.compare_digest(digest, expected)
 
 
+# 数据库表结构定义
+# 包含所有运行时数据表的 CREATE TABLE 语句
 SCHEMA = [
     """CREATE TABLE IF NOT EXISTS users (
         id VARCHAR(64) PRIMARY KEY, username VARCHAR(64) UNIQUE NOT NULL,
@@ -107,10 +121,19 @@ SCHEMA = [
 
 
 def _now() -> str:
+    """获取当前时间的 ISO 格式字符串。"""
     return datetime.now().isoformat(timespec="seconds")
 
 
 class RuntimeStore:
+    """
+    运行时数据存储类。
+    
+    管理 MySQL 数据库中的所有运行时数据表，提供：
+    - 数据库表结构初始化
+    - 通用 CRUD 操作
+    - 种子数据初始化
+    """
     def __init__(self) -> None:
         self.lock = RLock()
         self.mysql_ok = self._ensure_schema()
@@ -128,11 +151,31 @@ class RuntimeStore:
         return True
 
     def _all(self, table: str, limit: int = 200) -> list[dict[str, Any]]:
+        """
+        获取表中所有记录（按创建时间倒序）。
+        
+        Args:
+            table: 表名
+            limit: 最大记录数
+            
+        Returns:
+            记录列表
+        """
         with store._connect() as connection, connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM `{table}` ORDER BY created_at DESC LIMIT %s", (limit,))
             return list(cursor.fetchall())
 
     def _insert(self, table: str, item: dict[str, Any]) -> dict[str, Any]:
+        """
+        插入记录到表中。
+        
+        Args:
+            table: 表名
+            item: 记录数据
+            
+        Returns:
+            插入的记录
+        """
         with self.lock:
             with store._connect() as connection, connection.cursor() as cursor:
                 columns = list(item)
@@ -142,22 +185,48 @@ class RuntimeStore:
                 return item
 
     def _update(self, table: str, item_id: str, changes: dict[str, Any]) -> dict[str, Any]:
+        """
+        更新表中的记录。
+        
+        Args:
+            table: 表名
+            item_id: 记录 ID
+            changes: 要更新的字段
+            
+        Returns:
+            更新后的记录
+        """
         with store._connect() as connection, connection.cursor() as cursor:
             cursor.execute(f"UPDATE `{table}` SET {','.join(f'`{key}`=%s' for key in changes)} WHERE id=%s", [*changes.values(), item_id])
             connection.commit()
         return {"id": item_id, **changes}
 
     def _delete(self, table: str, item_id: str) -> None:
+        """删除表中的记录。"""
         with store._connect() as connection, connection.cursor() as cursor:
             cursor.execute(f"DELETE FROM `{table}` WHERE id=%s", (item_id,))
             connection.commit()
 
     def _delete_where(self, table: str, column: str, value: str) -> None:
+        """按条件删除表中的记录。"""
         with store._connect() as connection, connection.cursor() as cursor:
             cursor.execute(f"DELETE FROM `{table}` WHERE `{column}`=%s", (value,))
             connection.commit()
 
     def _find(self, table: str, item_id: str) -> dict[str, Any]:
+        """
+        查找表中的记录。
+        
+        Args:
+            table: 表名
+            item_id: 记录 ID
+            
+        Returns:
+            记录数据
+            
+        Raises:
+            KeyError: 如果记录不存在
+        """
         with store._connect() as connection, connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM `{table}` WHERE id=%s", (item_id,))
             row = cursor.fetchone()
@@ -166,6 +235,7 @@ class RuntimeStore:
         return row
 
     def _seed_users(self) -> None:
+        """初始化默认用户（student, guide, admin）。"""
         if self._all("users"):
             return
         for username, role in (("student", "student"), ("guide", "guide"), ("admin", "admin")):

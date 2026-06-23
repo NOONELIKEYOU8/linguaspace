@@ -1,3 +1,16 @@
+"""
+知识库存储模块。
+
+本模块管理 CSV 格式的静态知识数据，包括：
+- knowledge_items: 知识条目
+- graph_relations: 知识图谱关系
+- guide_places: 导游地点
+- routes: 行程路线
+- training_scenarios: 实训场景
+- collaboration_cases: 协同案例
+
+提供知识检索（RAG）、图谱查询等功能。
+"""
 from __future__ import annotations
 
 import json
@@ -27,6 +40,15 @@ def _split(value: str) -> list[str]:
 
 
 class Store:
+    """
+    知识库存储类。
+    
+    管理 CSV 格式的静态知识数据，提供：
+    - 数据加载与持久化
+    - 知识检索（RAG）
+    - 图谱查询
+    - CRUD 操作
+    """
     def __init__(self) -> None:
         self.lock = RLock()
         self.reload()
@@ -46,9 +68,26 @@ class Store:
             self.reviews: list[dict[str, Any]] = []
 
     def list_knowledge(self) -> list[dict[str, Any]]:
+        """获取所有知识条目列表。"""
         return [self._knowledge_view(item) for item in self.knowledge]
 
     def search_knowledge(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
+        """
+        搜索知识条目（RAG 检索）。
+        
+        检索策略：
+        1. 关键词匹配（标题、内容、标签）
+        2. 图谱关联查询
+        3. 向量相似度计算
+        4. 综合评分排序
+        
+        Args:
+            query: 查询文本
+            top_k: 返回结果数量
+            
+        Returns:
+            匹配的知识条目列表（包含分数和匹配词）
+        """
         terms = [part for part in re.split(r"\W+", query.lower()) if part]
         keyword_terms = [part for part in re.split(r"[\s,，|]+", query) if part]
         graph_relations = self.graph_query(query)
@@ -98,6 +137,7 @@ class Store:
             return self._knowledge_view(item)
 
     def delete_knowledge(self, doc_id: str) -> None:
+        """删除知识条目。"""
         with self.lock:
             self.knowledge.remove(self._find(self.knowledge, doc_id))
             self._persist("knowledge_items", self.knowledge)
@@ -129,6 +169,15 @@ class Store:
             self._persist("graph_relations", self.graph)
 
     def graph_query(self, entity: str) -> list[dict[str, str]]:
+        """
+        查询与实体相关的图谱关系。
+        
+        Args:
+            entity: 实体名称
+            
+        Returns:
+            相关关系列表（最多 40 条）
+        """
         return [item for item in self.list_graph() if entity in item["source"] or entity in item["target"]][:40]
 
     def add_scenario(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -195,6 +244,12 @@ class Store:
         }
 
     def _connect(self):
+        """
+        创建 MySQL 数据库连接。
+        
+        Returns:
+            pymysql 连接对象
+        """
         parsed = urlparse(settings.mysql_url.replace("mysql+pymysql://", "mysql://"))
         return pymysql.connect(host=parsed.hostname or "127.0.0.1", port=parsed.port or 3306, user=unquote(parsed.username or "linguaspace"), password=unquote(parsed.password or "linguaspace"), database=(parsed.path or "/linguaspace").lstrip("/"), charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor, connect_timeout=3)
 
